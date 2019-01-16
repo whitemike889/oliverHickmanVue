@@ -2,15 +2,18 @@
   <div id="app">
     <navBar />
     <router-view />
+    <Footer />
   </div>
 </template>
 
 <script>
 import navBar from '@/components/navBar.vue';
+import Footer from '@/components/footer.vue';
 
 export default {
   components: {
     navBar,
+    Footer,
   },
 };
 </script>
@@ -34,17 +37,25 @@ p {
   font-size: 20px;
   line-height: 30px;
 }
-a.two {
+a {
   text-decoration : none;
   color: #02552b;
 }
 a:visited {
   text-decoration: none;
 }
+.menuText {
+  font-size: 18px;
+  font-family: "Nunito Sans", sans-serif;
+  font-weight: 400;
+  color: #fff;
+  letter-spacing: 0.2em;
+  text-decoration: none;
+}
 #app {
   display: grid;
   grid-template-columns: [col1] 1fr;
-  grid-template-rows: [nav] auto [img1] 1fr [stuff] auto [img2] auto [footer] 0.25fr;
+  grid-template-rows: [nav] auto [img1] 1fr [stuff] auto [img2] auto [footer] 0.16fr;
   background-color: #fff;
 }
 </style>

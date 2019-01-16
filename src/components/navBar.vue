@@ -9,15 +9,6 @@
 </template>
 
 <style>
-.menuText {
-  font-size: 18px;
-  font-family: "Nunito Sans", sans-serif;
-  font-weight: 400;
-  color: #fff;
-  letter-spacing: 0.2em;
-  text-decoration: none;
-}
-
 .navBar {
   background-color: #02552b;
   padding: 4px;

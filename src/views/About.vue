@@ -18,7 +18,7 @@
         to free improvisation and is a founding member of the electric guitar quartet ICQ. He also has been working within the theatre and dance worlds as a composer and sound designer on various productions
         in Chicago and New York City since 2014.
        </br> </p>
-      <h1> <a class= "two" href="music.html"> LISTEN TO WORKS >> </a> </h1>
+      <h1> <a href="/#/music"> LISTEN TO WORKS >> </a> </h1>
     </div>
   </div>
 </template>
