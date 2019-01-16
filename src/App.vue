@@ -6,12 +6,12 @@
 </template>
 
 <script>
-import navBar from "@/components/navBar.vue";
+import navBar from '@/components/navBar.vue';
 
 export default {
   components: {
-    navBar
-  }
+    navBar,
+  },
 };
 </script>
 
@@ -22,7 +22,25 @@ export default {
 body {
   margin: 0px;
 }
-
+h1 {
+  color: #02552b;
+  font-size: 24px;
+  font-family: 'Nunito Sans', sans-serif;
+  font-weight: 400;
+  letter-spacing: 0.3em;
+}
+p {
+  font-family: 'Arapey', serif;
+  font-size: 20px;
+  line-height: 30px;
+}
+a.two {
+  text-decoration : none;
+  color: #02552b;
+}
+a:visited {
+  text-decoration: none;
+}
 #app {
   display: grid;
   grid-template-columns: [col1] 1fr;
