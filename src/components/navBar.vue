@@ -21,6 +21,10 @@
   grid-template-columns: 0.5fr auto auto auto auto auto 0.5fr;
   grid-template-rows: auto;
   justify-content: center;
+  position: fixed;
+  top: 0;
+  width: 100%;
+  z-index: 1;
 }
 .home {
   grid-row: 1;
@@ -41,5 +45,9 @@
 .contact {
   grid-row: 1;
   grid-column: 6;
+}
+/* Padding for the sticky header */
+.navBar + .contentWrapper {
+  padding-top: 42px;
 }
 </style>

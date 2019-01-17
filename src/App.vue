@@ -1,10 +1,13 @@
 <template>
   <div id="app">
     <navBar />
-    <router-view />
+    <div class="contentWrapper">
+      <router-view />
+    </div>
     <Footer />
   </div>
 </template>
+
 
 <script>
 import navBar from '@/components/navBar.vue';
