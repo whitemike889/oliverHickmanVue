@@ -1,6 +1,6 @@
 <template>
   <div class = "navBar bar menuText">
-    <div class='navBar home'><router-link class='menuText' to="/">HOME</router-link></div>
+    <div class='navBar home-nav'><router-link class='menuText' to="/">HOME</router-link></div>
     <div class='navBar about'><router-link class='menuText' to="/about">ABOUT</router-link></div>
     <div class='navBar music'><router-link class='menuText' to="/music">MUSIC</router-link></div>
     <div class='navBar downloads'><router-link class='menuText' to="/downloads">DOWNLOADS</router-link></div>
@@ -23,10 +23,10 @@
   justify-content: center;
   position: fixed;
   top: 0;
-  width: 100%;
+  width: 100vw;
   z-index: 1;
 }
-.home {
+.home-nav {
   grid-row: 1;
   grid-column: 2;
 }

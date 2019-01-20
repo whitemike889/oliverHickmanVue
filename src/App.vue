@@ -58,7 +58,16 @@ a:visited {
 #app {
   display: grid;
   grid-template-columns: [col1] 1fr;
-  grid-template-rows: [nav] auto [img1] 1fr [stuff] auto [img2] auto [footer] 0.16fr;
+  grid-template-rows: [nav] auto [img1] 1fr [stuff] auto [img2] 1fr [footer] auto;
   background-color: #fff;
+}
+.img {
+  width: 100%;
+  object-fit: cover;
+}
+.imgContainer1 {
+  grid-row: img1;
+  display: inline-grid;
+  position: relative;
 }
 </style>

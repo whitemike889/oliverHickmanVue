@@ -29,16 +29,6 @@
   grid-template-columns: [col1] 1fr;
   grid-template-rows: [img1] 1fr [aboutStuff] auto;
 }
-.img {
-  /*max-width: 1024px;*/
-  width: 100%;
-  object-fit: cover;
-}
-.imgContainer1 {
-  grid-row: img1;
-  display: inline-grid;
-  position: relative;
-}
 .bioDiv {
   grid-row: aboutStuff;
   text-align: center;
