@@ -21,14 +21,13 @@
     </div>
 
     <div class="linkBoxGrid">
-      <img class="gridPicture img" src="@/assets/Image2-OKHick-BW-Crop.jpg">
+      <img class="gridPicture" src="@/assets/Image2-OKHick-BW-Crop.jpg">
       <div class="img2Top"></div>
       <div class="musicLinkBox">
         <router-link to="/music" class="musicLink"> LISTEN TO MUSIC </router-link>
       </div>
       <div class="img2Bottom"></div>
     </div>
-
   </div>
 </template>
 
@@ -44,7 +43,6 @@
   grid-row: 1 / 4;
   grid-column: 1 / 4;
   width: 100vw;
-  /* height: 100vh; */
 }
 .img2Top {
   grid-row: 1;
@@ -75,7 +73,6 @@
   right: 0%;
   bottom: 0%;
   padding: 0 40px 20px;
-
 }
 p.firstName {
   font-size: 75px;
@@ -113,5 +110,7 @@ p.lastName{
   grid-template-columns: [logo] 1fr [text] 2fr;
   padding-top: 50px;
   padding-bottom: 50px;
+  background-color: #fff;
+  margin-top: -6px;
 }
 </style>

@@ -13,7 +13,6 @@
   </div>
 </template>
 
-
 <script>
 import navBar from '@/components/navBar.vue';
 import Footer from '@/components/footer.vue';
@@ -30,6 +29,7 @@ export default {
 @import url("https://fonts.googleapis.com/css?family=Nunito+Sans:400,900");
 @import url("https://fonts.googleapis.com/css?family=Arapey");
 
+/* Some Global Styles */
 body {
   margin: 0px;
 }
@@ -52,6 +52,12 @@ a {
 a:visited {
   text-decoration: none;
 }
+#app {
+  display: grid;
+  grid-template-columns: [col1] 1fr;
+  grid-template-rows: [nav] auto [img1] 1fr [stuff] auto [img2] 1fr [footer] auto;
+  background-color: #dbdbdb;
+}
 .menuText {
   font-size: 18px;
   font-family: "Nunito Sans", sans-serif;
@@ -60,16 +66,11 @@ a:visited {
   letter-spacing: 0.2em;
   text-decoration: none;
 }
-#app {
-  display: grid;
-  grid-template-columns: [col1] 1fr;
-  grid-template-rows: [nav] auto [img1] 1fr [stuff] auto [img2] 1fr [footer] auto;
-  background-color: #fff;
-}
 .img {
   width: 100%;
   object-fit: cover;
 }
+/* The top image */
 .imgContainer1 {
   grid-row: img1;
   display: inline-grid;

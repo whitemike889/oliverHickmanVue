@@ -13,7 +13,7 @@
         and the NYU Percussion Ensemble and his compositions have been performed throughout the United States and Europe.
         As a composer, his current interests include timbre, economy of means as it pertains to music,
         and the relationship between composer control and player freedom.
-        </br></br>
+        <br><br>
         As a guitarist, Oliver has played with a variety of ensembles ranging from musical theatre to comtemporary music
         to free improvisation. He is a co-founder of the improv ensemble <em>Consensus</em>. He also has been working within the theatre and dance worlds as a composer and sound designer on various productions
         in Chicago and New York City since 2014.
@@ -33,6 +33,7 @@
   grid-row: aboutStuff;
   text-align: center;
   padding: 10px 100px 10px 100px;
+  background-color: #fff;
 }
 p.bioText {
   text-align: justify;
