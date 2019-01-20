@@ -1,5 +1,5 @@
 <template>
-  <div class = "navBar bar menuText">
+  <div class = "bar menuText">
     <div class='navBar home-nav'><router-link class='menuText' to="/">HOME</router-link></div>
     <div class='navBar about'><router-link class='menuText' to="/about">ABOUT</router-link></div>
     <div class='navBar music'><router-link class='menuText' to="/music">MUSIC</router-link></div>
@@ -10,12 +10,12 @@
 
 <style>
 .navBar {
-  background-color: #02552b;
-  padding: 4px;
-  padding-left: 32px;
-  padding-right: 32px;
+  padding: 8px;
+  padding-left: 2.25vw;
+  padding-right: 2.25vw;
 }
 .bar {
+  background-color: #02552b;
   grid-row: nav;
   display: inline-grid;
   grid-template-columns: 0.5fr auto auto auto auto auto 0.5fr;
@@ -47,7 +47,7 @@
   grid-column: 6;
 }
 /* Padding for the sticky header */
-.navBar + .contentWrapper {
+.bar + .contentWrapper {
   padding-top: 42px;
 }
 </style>
