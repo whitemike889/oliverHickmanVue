@@ -24,16 +24,12 @@
 </template>
 
 <style>
-.aboutWrapper {
-  display: grid;
-  grid-template-columns: [col1] 1fr;
-  grid-template-rows: [img1] 1fr [aboutStuff] auto;
-}
 .bioDiv {
-  grid-row: aboutStuff;
+  grid-row: stuff;
   text-align: center;
   padding: 10px 100px 10px 100px;
   background-color: #fff;
+  margin-top: -6px;
 }
 p.bioText {
   text-align: justify;

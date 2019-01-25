@@ -1,6 +1,6 @@
 <template>
   <div class="footer menuText">
-    <div class="footCon">© OLIVER HICKMAN MUSIC 2019</div>
+    <div class="footCon">© OLIVER HICKMAN MUSIC {{ new Date().getFullYear() }}</div>
   </div>
 </template>
 

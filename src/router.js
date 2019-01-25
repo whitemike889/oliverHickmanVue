@@ -4,6 +4,7 @@ import VueRouter from 'vue-router';
 // import the views
 import Home from './views/Home.vue';
 import About from './views/About.vue';
+import Music from './views/Music';
 
 Vue.use(VueRouter);
 
@@ -18,6 +19,11 @@ export default new VueRouter({
       path: '/about',
       name: 'about',
       component: About,
+    },
+    {
+      path: '/music',
+      name: 'music',
+      component: Music
     },
   ],
 });

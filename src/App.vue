@@ -67,7 +67,7 @@ a:visited {
   text-decoration: none;
 }
 .img {
-  width: 100%;
+  width: 100vw;
   object-fit: cover;
 }
 /* The top image */
