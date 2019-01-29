@@ -5,18 +5,22 @@
     </div>
     <div class="content">
       <h1> MUSIC </h1>
-      <audio-player />
+      <div v-for='piece in $options.musicData'>
+        <audio-player :title="piece.title" :details="piece.details"></audio-player>
+      </div>
     </div>
   </div>
 </template>
 
 <script>
 import AudioPlayer from '@/components/audioPlayer.vue';
+import musicData from '@/assets/musicData.json';
 
 export default {
   components: {
     AudioPlayer
-  }
+  },
+  musicData: musicData
 }
 </script>
 
@@ -27,16 +31,6 @@ h2 {
   font-family: "Nunito Sans", sans-serif;
   font-weight: 400;
   letter-spacing: 0.3em;
-}
-
-p.detail {
-  text-align: left;
-  margin-top: 0px;
-  line-height: 20px;
-}
-
-.linkOut {
-  color: #4f4f4f;
 }
 
 .content {

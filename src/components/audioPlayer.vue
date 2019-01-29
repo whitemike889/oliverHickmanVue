@@ -1,5 +1,6 @@
 <template>
   <div class='playerWrapper'>
+    <h2> {{ title.toUpperCase() }} </h2>
     <img src="@/assets/flickering_waveform.png" class="waveform">
     <div class='songProgress'>
       <div class='songProgressBar' v-bind:style="{ width:playbackPercent }"></div>
@@ -11,6 +12,7 @@
         </audio>
       </vue-plyr>
     </div> <!-- end player -->
+    <p class="detail" v-html="details"> </p>
   </div> <!-- end playerWrapper -->
 </template>
 
@@ -28,6 +30,7 @@ export default {
       playbackPercent: '0%'
     }
   },
+  props: ['title', 'details'],
   methods: {
     //this updates the bar as it progresses
     updatePlaybackBar: function () {
@@ -46,15 +49,22 @@ export default {
     duration () { return this.$refs.plyr.player.duration }
   }
 }
-
-function sliderPercent(time, duration) {
-  let percent = (time / duration) * 100;
-  return `${percent.toString()}%`
-}
 </script>
 
 <style>
-/* Overlap the two divs */
+
+p.detail {
+  position: absolute;
+  text-align: left;
+  line-height: 20px;
+  bottom: 0px;
+  margin: 0 0 5px 20px;
+}
+.linkOut {
+  color: #4f4f4f;
+}
+
+/* Overlap the three divs */
 .playerWrapper {
   position: relative;
   width: 100vw;
@@ -77,12 +87,11 @@ function sliderPercent(time, duration) {
   height: 100%;
 }
 .songProgressBar {
-  width: 20%;
+  width: 20%; /* This will be overwritten immediately */
   height: 100%;
   background-color: #034121;
   opacity: 0.18;
 }
-
 
 /* Style the plyr a bit */
 .plyr {
@@ -110,9 +119,11 @@ function sliderPercent(time, duration) {
 /* Change the slider background color on all browsers */
 .plyr--full-ui.plyr--audio input[type="range"]::-webkit-slider-runnable-track {
   background: #747777;
+  box-shadow: 0 0 0 0px;
 }
 .plyr--full-ui.plyr--audio input[type="range"]::-moz-range-track {
   background: #747777;
+  box-shadow: 0 0 0 0px;
 }
 .plyr--audio .plyr__controls{
   background-color: transparent;
