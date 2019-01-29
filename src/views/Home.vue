@@ -1,7 +1,7 @@
 <template>
   <div class="home">
     <div class="imgContainer1">
-        <img class="img" src="@/assets/Image1-OKHick-BW-Crop.jpg" alt="noImg">
+        <img class="img" src="@/assets/image1-okhick-bw-crop.jpg" alt="noImg">
         <div class="titleNameBox">
             <p class="firstName">OLIVER</p>
             <p class="lastName">HICKMAN</p>
@@ -21,7 +21,7 @@
     </div>
 
     <div class="linkBoxGrid">
-      <img class="gridPicture" src="@/assets/Image2-OKHick-BW-Crop.jpg">
+      <img class="gridPicture" src="@/assets/image2-okhick-bw-crop.jpg">
       <div class="img2Top"></div>
       <div class="musicLinkBox">
         <router-link to="/music" class="musicLink"> LISTEN TO MUSIC </router-link>

@@ -5,10 +5,20 @@
     </div>
     <div class="content">
       <h1> MUSIC </h1>
-
+      <audio-player />
     </div>
   </div>
 </template>
+
+<script>
+import AudioPlayer from '@/components/audioPlayer.vue';
+
+export default {
+  components: {
+    AudioPlayer
+  }
+}
+</script>
 
 <style>
 h2 {

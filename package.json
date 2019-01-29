@@ -9,6 +9,7 @@
   },
   "dependencies": {
     "vue": "^2.5.21",
+    "vue-plyr": "^5.1.0",
     "vue-router": "^3.0.1"
   },
   "devDependencies": {
