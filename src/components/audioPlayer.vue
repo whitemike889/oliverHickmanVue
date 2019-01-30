@@ -19,6 +19,7 @@
 <script>
 import { VuePlyr } from 'vue-plyr';
 import 'vue-plyr/dist/vue-plyr.css';
+import 'rangetouch/dist/rangetouch.js';
 
 export default {
   name: 'audio-player',
