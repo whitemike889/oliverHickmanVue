@@ -1,7 +1,7 @@
 <template>
   <div class="home">
     <div class="imgContainer1">
-        <img class="img" src="@/assets/image1-okhick-bw-crop.jpg" alt="noImg">
+        <img class="img" src="@/assets/img/image1-okhick-bw-crop.jpg" alt="noImg">
         <div class="titleNameBox">
             <p class="firstName">OLIVER</p>
             <p class="lastName">HICKMAN</p>
@@ -10,7 +10,7 @@
 
     <div class="homeContent">
         <div class="logo">
-            <img class="logoImg" src="@/assets/headphones-icon.png" alt="noLogo">
+            <img class="logoImg" src="@/assets/img/headphones-icon.png" alt="noLogo">
         </div>
         <div class="text">
             <h1> COMPOSER, MUSIC TECHNOLOGIST, </br> GUITARIST, SOUND DESIGNER </h1>
@@ -21,7 +21,7 @@
     </div>
 
     <div class="linkBoxGrid">
-      <img class="gridPicture" src="@/assets/image2-okhick-bw-crop.jpg">
+      <img class="gridPicture" src="@/assets/img/image2-okhick-bw-crop.jpg">
       <div class="img2Top"></div>
       <div class="musicLinkBox">
         <router-link to="/music" class="musicLink"> LISTEN TO MUSIC </router-link>

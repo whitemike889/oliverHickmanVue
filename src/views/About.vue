@@ -1,7 +1,7 @@
 <template>
   <div class=aboutWrapper>
     <div class="imgContainer1">
-      <img class="img" src="@/assets/Oliver+Kiersten-184.jpg" alt="noImg">
+      <img class="img" src="@/assets/img/Oliver+Kiersten-184.jpg" alt="noImg">
     </div>
     <div class = "bioDiv">
       <h1> OLIVER HICKMAN </h1>

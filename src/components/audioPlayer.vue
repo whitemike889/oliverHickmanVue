@@ -1,14 +1,14 @@
 <template>
   <div class='playerWrapper'>
     <h2> {{ title.toUpperCase() }} </h2>
-    <img src="@/assets/flickering_waveform.png" class="waveform">
+    <img :src="`${publicPath}waveforms/${waveform}`" class="waveform" />
     <div class='songProgress'>
       <div class='songProgressBar' v-bind:style="{ width:playbackPercent }"></div>
     </div>
     <div class='player'>
       <vue-plyr ref="plyr">
         <audio>
-          <source src="@/assets/FluorescentFilckering.mp3" type="audio/mp3"/>
+          <source :src="`${publicPath}audio/${audio}`" type="audio/mp3"/>
         </audio>
       </vue-plyr>
     </div> <!-- end player -->
@@ -27,10 +27,11 @@ export default {
   },
   data: function (){
     return {
-      playbackPercent: '0%'
+      playbackPercent: '0%',
+      publicPath: process.env.BASE_URL
     }
   },
-  props: ['title', 'details'],
+  props: ['title', 'details', 'waveform', 'audio'],
   methods: {
     //this updates the bar as it progresses
     updatePlaybackBar: function () {
@@ -54,6 +55,7 @@ export default {
 <style>
 
 p.detail {
+  color: #000;
   position: absolute;
   text-align: left;
   line-height: 20px;
@@ -61,7 +63,14 @@ p.detail {
   margin: 0 0 5px 20px;
 }
 .linkOut {
-  color: #4f4f4f;
+  color: #4a4a4a;
+}
+h2 {
+  color: #000;
+  font-size: 24px;
+  font-family: "Nunito Sans", sans-serif;
+  font-weight: 400;
+  letter-spacing: 0.3em;
 }
 
 /* Overlap the three divs */
