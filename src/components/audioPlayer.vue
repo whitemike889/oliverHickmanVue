@@ -1,6 +1,6 @@
 <template>
   <div class='playerWrapper'>
-    <h2> {{ title.toUpperCase() }} </h2>
+    <h2 v-html="`${title.toUpperCase()}`"> </h2>
     <img :src="`${publicPath}waveforms/${waveform}`" class="waveform" />
     <div class='songProgress'>
       <div class='songProgressBar' v-bind:style="{ width:playbackPercent }"></div>
@@ -62,6 +62,7 @@ p.detail {
   line-height: 20px;
   bottom: 0px;
   margin: 0 0 5px 20px;
+  z-index: 4;
 }
 .linkOut {
   color: #4a4a4a;
@@ -72,6 +73,8 @@ h2 {
   font-family: "Nunito Sans", sans-serif;
   font-weight: 400;
   letter-spacing: 0.3em;
+  position: relative;
+  z-index: 4;
 }
 
 /* Overlap the three divs */
@@ -79,6 +82,7 @@ h2 {
   position: relative;
   width: 100vw;
   height: 200px;
+  margin-top: 50px;
 }
 .waveform, .player, .songProgress {
   position: absolute;
@@ -89,18 +93,21 @@ h2 {
 .waveform {
   width: 100vw;
   height: 100%;
+  z-index: 1;
 }
 
 /* Make the progress bar */
 .songProgress {
   width: 100%;
   height: 100%;
+  z-index: 2;
 }
 .songProgressBar {
   width: 20%; /* This will be overwritten immediately */
   height: 100%;
   background-color: #034121;
   opacity: 0.18;
+  z-index: 2;
 }
 
 /* Style the plyr a bit */
@@ -110,6 +117,7 @@ h2 {
   width: 100vw;
   padding-right: 10px;
   padding-top: 74px;
+  z-index: 3;
 }
 /* Hide the speed settings. Ain't nobody got time for that */
 .plyr__menu {
