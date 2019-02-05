@@ -1,6 +1,7 @@
 <template>
   <div class='playerWrapper'>
-    <h2 v-html="`${title.toUpperCase()}`"> </h2>
+    <h2 class="musicTitle" v-html="`${title.toUpperCase()}`"> </h2>
+    <div v-if="mvnts"><mvnt-box/></div>
     <img :src="`${publicPath}waveforms/${waveform}`" class="waveform" />
     <div class='songProgress'>
       <div class='songProgressBar' v-bind:style="{ width:playbackPercent }"></div>
@@ -18,13 +19,15 @@
 
 <script>
 import { VuePlyr } from 'vue-plyr';
+import MovementsBox from '@/components/movementsBox.vue';
 import 'vue-plyr/dist/vue-plyr.css';
 import 'rangetouch/dist/rangetouch.js';
 
 export default {
   name: 'audio-player',
   components: {
-    VuePlyr
+    VuePlyr,
+    'mvnt-box': MovementsBox
   },
   data: function (){
     return {
@@ -32,7 +35,8 @@ export default {
       publicPath: process.env.BASE_URL
     }
   },
-  props: ['title', 'details', 'waveform', 'audio'],
+  props: ['title', 'details', 'waveform', 'audio', 'mvnts'],
+  
   methods: {
     //this updates the bar as it progresses
     updatePlaybackBar: function () {
@@ -44,6 +48,7 @@ export default {
   mounted () {
     //this binds the event listener on mount
     this.player.on('timeupdate', this.updatePlaybackBar)
+
   },
   computed: {
     //define the player object. Can now be accessed through this.player
@@ -67,12 +72,18 @@ p.detail {
 .linkOut {
   color: #4a4a4a;
 }
-h2 {
+h2.musicTitle {
   color: #000;
   font-size: 24px;
   font-family: "Nunito Sans", sans-serif;
   font-weight: 400;
   letter-spacing: 0.3em;
+  position: relative;
+  z-index: 4;
+  margin-bottom: 0px;
+}
+.movementBar p {
+  margin-top: -10px;
   position: relative;
   z-index: 4;
 }

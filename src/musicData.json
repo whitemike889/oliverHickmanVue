@@ -9,17 +9,18 @@
     "title": "Five Poems by E. E. Cummings (2017-2018)",
     "details": "for Soprano, Voice, Violin, and Piano <br> Premiered and Recorded by the NYU Composers Ensemble feat. Soprano <a class='linkOut' href='https://www.cassandravenaglia.com/'>Cassandra Venaglia</a>",
     "waveform": "e_e_cummings.png",
-    "audio": "e_e_cummings.mp3"
+    "audio": "e_e_cummings.mp3",
+    "movements": ["1", "2", "3"]
   },
   {
     "title": "Extinguish (2017)",
-    "details": "for Piano, Double Bass, Drum Set, and Electronics <br> Recorded and premiered by <a class='linkOut' href='http://www.bearthoven.com'>Bearthoven</a>",
+    "details": "for Piano, Double Bass, Drum Set, and Electronics <br> Recorded and premiered by <a class='linkOut' href='https://www.bearthoven.com'>Bearthoven</a>",
     "waveform": "extinguish.png",
     "audio": "extinguish.mp3"
   },
   {
     "title": "Trenches (2017)",
-    "details": "for Soprano and Alto Saxophone <br> Recorded and premiered by <a class='linkOut' href='http://dylan-ward-saxophone.squarespace.com'>Dylan Ward</a> and <a class ='linkOut' href='https://www.andrewkossmusic.com'>Andrew Koss</a>",
+    "details": "for Soprano and Alto Saxophone <br> Recorded and premiered by <a class='linkOut' href='https://dylan-ward-saxophone.squarespace.com'>Dylan Ward</a> and <a class ='linkOut' href='https://www.andrewkossmusic.com'>Andrew Koss</a>",
     "waveform": "trenches.png",
     "audio": "trenches.mp3"
   },

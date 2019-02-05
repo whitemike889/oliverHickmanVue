@@ -11,6 +11,7 @@
           :details="piece.details"
           :waveform="piece.waveform"
           :audio="piece.audio"
+          :mvnts="validateMovements(piece.movements)"
         ></audio-player>
       </div>
     </div>
@@ -23,9 +24,14 @@ import musicData from '@/musicData.json';
 
 export default {
   components: {
-    AudioPlayer
+    AudioPlayer,
   },
-  musicData: musicData
+  musicData: musicData,
+  methods: {
+    validateMovements: function (piece) {
+      return (typeof piece !== 'undefined' ? piece : false);
+    }
+  }
 }
 </script>
 
