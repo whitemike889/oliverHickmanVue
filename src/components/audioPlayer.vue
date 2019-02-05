@@ -1,7 +1,7 @@
 <template>
   <div class='playerWrapper'>
     <h2 class="musicTitle" v-html="`${title.toUpperCase()}`"> </h2>
-    <div v-if="mvnts"><mvnt-box/></div>
+    <div v-if="mvmts"><mvmt-box :mvmts="mvmts"/></div>
     <img :src="`${publicPath}waveforms/${waveform}`" class="waveform" />
     <div class='songProgress'>
       <div class='songProgressBar' v-bind:style="{ width:playbackPercent }"></div>
@@ -27,7 +27,7 @@ export default {
   name: 'audio-player',
   components: {
     VuePlyr,
-    'mvnt-box': MovementsBox
+    'mvmt-box': MovementsBox
   },
   data: function (){
     return {
@@ -35,8 +35,8 @@ export default {
       publicPath: process.env.BASE_URL
     }
   },
-  props: ['title', 'details', 'waveform', 'audio', 'mvnts'],
-  
+  props: ['title', 'details', 'waveform', 'audio', 'mvmts'],
+
   methods: {
     //this updates the bar as it progresses
     updatePlaybackBar: function () {

@@ -11,7 +11,7 @@
           :details="piece.details"
           :waveform="piece.waveform"
           :audio="piece.audio"
-          :mvnts="validateMovements(piece.movements)"
+          :mvmts="validateMovements(piece.movements)"
         ></audio-player>
       </div>
     </div>
