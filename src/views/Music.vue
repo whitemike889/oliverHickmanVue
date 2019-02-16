@@ -5,8 +5,9 @@
     </div>
     <div class="content">
       <h1> MUSIC </h1>
-      <div v-for='piece in $options.musicData'>
+      <div v-for='(piece,index) in $options.musicData'>
         <audio-player
+          :index="index"
           :title="piece.title"
           :details="piece.details"
           :waveform="piece.waveform"
@@ -29,6 +30,7 @@ export default {
   musicData: musicData,
   methods: {
     validateMovements: function (piece) {
+      //return the movements if exist or false
       return (typeof piece !== 'undefined' ? piece : false);
     }
   }

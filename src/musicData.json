@@ -11,11 +11,26 @@
     "waveform": "e_e_cummings.png",
     "audio": "e_e_cummings.mp3",
     "movements": [
-      "Something Long",
-      "DUUUUUUUUUUUUUUUDE",
-      "SWEEEET",
-      "DOPE",
-      "#5"
+      {
+        "title": "Something Long",
+        "timecode": 0
+      },
+      {
+        "title": "DUUUUUUUUUUUUUUUDE",
+        "timecode": 90
+      },
+      {
+        "title": "SWEEEET",
+        "timecode": 100
+      },
+      {
+        "title": "DOPE",
+        "timecode": 240
+      },
+      {
+        "title": "#5",
+        "timecode": 500
+      }
     ]
   },
   {
@@ -28,7 +43,7 @@
     "title": "Trenches (2017)",
     "details": "for Soprano and Alto Saxophone <br> Recorded and premiered by <a class='linkOut' href='https://dylan-ward-saxophone.squarespace.com'>Dylan Ward</a> and <a class ='linkOut' href='https://www.andrewkossmusic.com'>Andrew Koss</a>",
     "waveform": "trenches.png",
-    "audio": "trenches.mp3"
+    "audio": "trenches.mp3",
   },
   {
     "title": "One at a Time (2017)",

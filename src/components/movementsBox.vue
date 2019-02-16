@@ -5,10 +5,10 @@
     <p v-on:click="toggleMvnts">MOVEMENTS</p>
   </div>
   <div class="moreMvmts" v-bind:style="columnsCalc" v-bind:class="[animation]">
-    <div v-for="mvmt in mvmts"
+    <div v-for="(mvmt, mvmtIndex) in mvmts"
       class="mvmt"
-      v-text="mvmt"
-      v-on:click="test"
+      v-text="mvmt.title"
+      v-on:click="selectMvmt(mvmtIndex)"
     ></div>
   </div>
 </div>
@@ -32,24 +32,20 @@ export default {
     return {
       isShowing: true,
       animation: '',
-      player: ''
     }
   },
   methods: {
     toggleMvnts: function() {
       this.isShowing = !this.isShowing;
     },
-    test: function() {
-      console.log(this.player);
-      this.player.currentTime = 90;
+    //take the clicked element, find the time code, and emit the event to the EventBus
+    selectMvmt: function(mvmtIndex) {
+      let newTimecodeEmit = `newTimecode_${this.index}`;
+      let newTimecode = this.mvmts[mvmtIndex].timecode;
+      EventBus.$emit(newTimecodeEmit, newTimecode);
     }
   },
-  mounted() {
-    EventBus.$on('publishPlyr', (player) => {
-      this.player = player;
-    });
-  },
-  props: ['mvmts'],
+  props: ['index', 'mvmts'],
   watch: {
     //watch isShowing and run on change
     isShowing() {

@@ -1,7 +1,10 @@
 <template>
   <div class='playerWrapper'>
     <h2 class="musicTitle" v-html="`${title.toUpperCase()}`"> </h2>
-    <mvmt-box v-if="mvmts" :mvmts="mvmts"/>
+    <mvmt-box v-if="mvmts"
+      :mvmts="mvmts"
+      :index="index"
+    />
     <img :src="`${publicPath}waveforms/${waveform}`" class="waveform" />
     <div class='songProgress'>
       <div class='songProgressBar' v-bind:style="{ width:playbackPercent }"></div>
@@ -36,28 +39,28 @@ export default {
       publicPath: process.env.BASE_URL
     }
   },
-  props: ['title', 'details', 'waveform', 'audio', 'mvmts'],
+  props: ['index', 'title', 'details', 'waveform', 'audio', 'mvmts'],
 
   methods: {
     //this updates the bar as it progresses
-    updatePlaybackBar: function () {
+    updatePlaybackBar: function() {
       let percent = (this.player.currentTime / this.duration) * 100;
-      let percentString = `${ percent.toString() }%`
+      let percentString = `${percent.toString()}%`
       this.playbackPercent = percentString;
     },
-    emitPlater: function(mvmt) {
-      EventBus.$on(`publishPlayer_${mvmt}`, (player) => {
-        this.player = player;
-      });
-    }
    },
   mounted () {
     //this binds the event listener on mount
     this.player.on('timeupdate', this.updatePlaybackBar);
+    //listens on the EventBus for a new timecode from movementsBox. Updates current time
+    EventBus.$on(`newTimecode_${this.index}`, timecode => {
+      this.player.currentTime = timecode;
+    });
   },
   computed: {
     //define the player object. Can now be accessed through this.player
     player () { return this.$refs.plyr.player },
+    //returns the duration of the track
     duration () { return this.$refs.plyr.player.duration }
   }
 }
