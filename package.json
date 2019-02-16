@@ -11,6 +11,7 @@
     "@fortawesome/fontawesome-svg-core": "^1.2.13",
     "@fortawesome/free-solid-svg-icons": "^5.7.0",
     "@fortawesome/vue-fontawesome": "^0.1.5",
+    "animate.css": "^3.7.0",
     "i": "^0.3.6",
     "npm": "^6.7.0",
     "rangetouch": "^1.0.5",

@@ -1,7 +1,7 @@
 <template>
   <div class='playerWrapper'>
     <h2 class="musicTitle" v-html="`${title.toUpperCase()}`"> </h2>
-    <div v-if="mvmts"><mvmt-box :mvmts="mvmts"/></div>
+    <mvmt-box v-if="mvmts" :mvmts="mvmts"/>
     <img :src="`${publicPath}waveforms/${waveform}`" class="waveform" />
     <div class='songProgress'>
       <div class='songProgressBar' v-bind:style="{ width:playbackPercent }"></div>
@@ -22,6 +22,7 @@ import { VuePlyr } from 'vue-plyr';
 import MovementsBox from '@/components/movementsBox.vue';
 import 'vue-plyr/dist/vue-plyr.css';
 import 'rangetouch/dist/rangetouch.js';
+import EventBus from '../eventBus.js';
 
 export default {
   name: 'audio-player',
@@ -29,7 +30,7 @@ export default {
     VuePlyr,
     'mvmt-box': MovementsBox
   },
-  data: function (){
+  data: function() {
     return {
       playbackPercent: '0%',
       publicPath: process.env.BASE_URL
@@ -43,12 +44,16 @@ export default {
       let percent = (this.player.currentTime / this.duration) * 100;
       let percentString = `${ percent.toString() }%`
       this.playbackPercent = percentString;
+    },
+    emitPlater: function(mvmt) {
+      EventBus.$on(`publishPlayer_${mvmt}`, (player) => {
+        this.player = player;
+      });
     }
-  },
+   },
   mounted () {
     //this binds the event listener on mount
-    this.player.on('timeupdate', this.updatePlaybackBar)
-
+    this.player.on('timeupdate', this.updatePlaybackBar);
   },
   computed: {
     //define the player object. Can now be accessed through this.player
@@ -121,14 +126,19 @@ h2.musicTitle {
   z-index: 2;
 }
 
+.movementBoxWrapper {
+  z-index: 3;
+}
+
 /* Style the plyr a bit */
 .plyr {
   font-family: "Nunito Sans", sans-serif;
   color: #000;
   width: 100vw;
-  padding-right: 10px;
-  padding-top: 74px;
-  z-index: 3;
+  position: relative;
+  right: 10px;
+  top: 74px;
+  z-index: 4;
 }
 /* Hide the speed settings. Ain't nobody got time for that */
 .plyr__menu {
