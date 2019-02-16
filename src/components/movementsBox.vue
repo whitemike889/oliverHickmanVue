@@ -3,8 +3,12 @@
   <div class="showMoreMvmts">
     <font-awesome icon="chevron-down" />
     <p v-on:click="toggleMvnts">MOVEMENTS</p>
+
   </div>
-  <div class="moreMvmts" v-bind:style="columnsCalc" v-bind:class="[animation]">
+    <div class="moreMvmts"
+      v-bind:style="columnsCalc"
+      v-bind:class="[animation, {active: firstShow}]"
+    >
     <div v-for="(mvmt, mvmtIndex) in mvmts"
       class="mvmt"
       v-text="mvmt.title"
@@ -31,23 +35,27 @@ export default {
   data: function() {
     return {
       isShowing: true,
-      animation: '',
+      firstShow: false,
+      animation: ''
     }
   },
   methods: {
     toggleMvnts: function() {
+      //hide the movements until first click
+      this.firstShow = true;
+      //control the animation
       this.isShowing = !this.isShowing;
     },
     //take the clicked element, find the time code, and emit the event to the EventBus
     selectMvmt: function(mvmtIndex) {
       let newTimecodeEmit = `newTimecode_${this.index}`;
-      let newTimecode = this.mvmts[mvmtIndex].timecode;
+      let newTimecodeString = this.mvmts[mvmtIndex].timecode;
+      let newTimecode = newTimecodeString.toSeconds();
       EventBus.$emit(newTimecodeEmit, newTimecode);
     }
   },
   props: ['index', 'mvmts'],
   watch: {
-    //watch isShowing and run on change
     isShowing() {
       //determine if it needs to fade in or out
       let direction = this.animation.includes('fadeInDown') ? 'fadeOutUp' : 'fadeInDown';
@@ -57,6 +65,13 @@ export default {
   computed: {
     columnsCalc () { return `gridTemplateColumns: repeat(${this.mvmts.length}, auto)` }
   }
+}
+
+//convert [M]M:SS to seconds. Ripped from https://stackoverflow.com/questions/9640266/convert-hhmmss-string-to-seconds-only-in-javascript
+String.prototype.toSeconds = function() {
+  if (!this) return null;
+  let ms = this.split(':');
+  return (+ms[0]) * 60 + (+ms[1] || 0);
 }
 </script>
 
@@ -86,11 +101,14 @@ export default {
 
 /* the grid wrapper */
 .moreMvmts {
-  display: inline-grid;
+  display: none;
   grid-template-rows: auto;
   column-gap: 30px;
   position: relative;
   z-index: 1;
+}
+.active {
+  display: inline-grid;
 }
 
 /* the grid cells */
