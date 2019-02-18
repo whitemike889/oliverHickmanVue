@@ -74,7 +74,7 @@ p.detail {
   text-align: left;
   line-height: 20px;
   bottom: 0px;
-  margin: 0 0 5px 20px;
+  margin: 0 0 2px 5px;
   z-index: 4;
 }
 .linkOut {
@@ -89,6 +89,7 @@ h2.musicTitle {
   position: relative;
   z-index: 4;
   margin-bottom: 0px;
+  margin-top: 0px;
 }
 .movementBar p {
   margin-top: -10px;
@@ -98,10 +99,10 @@ h2.musicTitle {
 
 /* Overlap the three divs */
 .playerWrapper {
+  grid-column: player;
   position: relative;
-  width: 100vw;
+  width: calc(100vw - 155px - 5px); /* viewWidth - pictureWidth - grid-column-gap */
   height: 200px;
-  margin-top: 50px;
 }
 .waveform, .player, .songProgress {
   position: absolute;
@@ -110,7 +111,7 @@ h2.musicTitle {
 }
 
 .waveform {
-  width: 100vw;
+  width: calc(100vw - 155px - 5px); /* viewWidth - pictureWidth - grid-column-gap */
   height: 100%;
   z-index: 1;
 }
@@ -137,7 +138,7 @@ h2.musicTitle {
 .plyr {
   font-family: "Nunito Sans", sans-serif;
   color: #000;
-  width: 100vw;
+  width: calc(100vw - 155px - 5px); /* viewWidth - pictureWidth - grid-column-gap */
   position: relative;
   right: 10px;
   top: 74px;

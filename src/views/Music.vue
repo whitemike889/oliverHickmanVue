@@ -5,8 +5,9 @@
     </div>
     <div class="content">
       <h1> MUSIC </h1>
-      <div v-for='(piece,index) in $options.musicData'>
-        <audio-player
+      <div class="pieceWrapper" v-for='(piece,index) in $options.musicData'>
+        <pdf-viewer class="pdfCover" />
+        <audio-player class="audioPlayer"
           :index="index"
           :title="piece.title"
           :details="piece.details"
@@ -21,11 +22,13 @@
 
 <script>
 import AudioPlayer from '@/components/audioPlayer.vue';
+import pdfViewer from '@/components/pdfViewer.vue';
 import musicData from '@/musicData.json';
 
 export default {
   components: {
     AudioPlayer,
+    pdfViewer
   },
   musicData: musicData,
   methods: {
@@ -51,5 +54,17 @@ export default {
 .musicContent {
   display: inline-grid;
   width: 95%;
+}
+
+.pieceWrapper {
+  display: inline-grid;
+  width:100vw;
+  grid-template-rows: 200px;
+  grid-template-columns: [cover] 155px [player] auto;
+  grid-column-gap: 5px;
+}
+
+.pdfCover {
+  grid-column: cover;
 }
 </style>
