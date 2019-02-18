@@ -1,20 +1,34 @@
 <template>
-    <div class="coverImage"
+  <div class="coverImage"
+    v-on:mouseover="coverHover=true"
+    v-on:mouseleave="coverHover=false"
+    >
+    <img v-bind:src="`${publicPath}CO3_cover.jpg`"/>
+    <font-awesome
+      icon="eye"
+      class="fa-eye"
+      v-bind:class="{faEyeHover: coverHover}"
       v-on:mouseover="coverHover=true"
       v-on:mouseleave="coverHover=false"
+    />
+      <div>
+      <button
+        type="button"
+        class="btn"
+        @click="isModalVisible=true"
       >
-      <img v-bind:src="`${publicPath}CO3_cover.jpg`"/>
-      <font-awesome
-        icon="eye"
-        class="fa-eye"
-        v-bind:class="{faEyeHover: coverHover}"
-        v-on:mouseover="coverHover=true"
-        v-on:mouseleave="coverHover=false"
+        Open Modal!
+      </button>
+      <pdf-modal
+        v-show="isModalVisible"
+        @close="isModalVisible=false"
       />
+      </div>
     </div>
 </template>
 
 <script>
+import pdfModal from '@/components/pdf-modal.vue'
 import { library } from '@fortawesome/fontawesome-svg-core'
 import { faEye } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
@@ -24,12 +38,14 @@ library.add(faEye);
 export default {
   name: 'pdf-viewer',
   components: {
-    'font-awesome': FontAwesomeIcon
+    'font-awesome': FontAwesomeIcon,
+    pdfModal
   },
   data: function() {
     return {
       publicPath: process.env.BASE_URL,
-      coverHover: false
+      coverHover: false,
+      isModalVisible: false,
     }
   }
 }
@@ -39,6 +55,8 @@ export default {
 .coverImage{
   grid-column: cover;
   position: relative;
+  /* make sure this is on top or modal won't work */
+  z-index: 25;
 }
 .coverImage img{
   width: 100%;
