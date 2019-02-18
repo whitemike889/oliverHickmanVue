@@ -1,13 +1,24 @@
 <template>
 <div class="movementBoxWrapper">
-  <div class="showMoreMvmts">
-    <font-awesome icon="chevron-down" />
-    <p v-on:click="toggleMvnts">MOVEMENTS</p>
-
+  <div class="showMoreMvmts" v-bind:class="{upShiftMargin: isShowing}">
+    <font-awesome class="angle-up" icon="angle-up"
+      v-on:click="toggleMvnts"
+      v-show="isShowing"
+      v-bind:class="{grow: moreGrow}"
+    />
+    <p v-on:click="toggleMvnts"
+      v-on:mouseover="moreGrow=true"
+      v-on:mouseleave="moreGrow=false"
+    > MOVEMENTS </p>
+    <font-awesome class="angle-down" icon="angle-down"
+      v-on:click="toggleMvnts"
+      v-show="!isShowing"
+      v-bind:class="{grow: moreGrow}"
+    />
   </div>
-    <div class="moreMvmts"
-      v-bind:style="columnsCalc"
-      v-bind:class="[animation, {active: firstShow}]"
+  <div class="moreMvmts"
+    v-bind:style="columnsCalc"
+    v-bind:class="[animation, {active: firstShow}, {upShiftTop: !isShowing}]"
     >
     <div v-for="(mvmt, mvmtIndex) in mvmts"
       class="mvmt"
@@ -21,12 +32,16 @@
 <script>
 
 import { library } from '@fortawesome/fontawesome-svg-core'
-import { faChevronDown } from '@fortawesome/free-solid-svg-icons';
+import { faAngleDown } from '@fortawesome/free-solid-svg-icons';
+import { faAngleUp } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
+
+
 import 'animate.css/animate.min.css';
 import EventBus from '../eventBus.js';
 
-library.add(faChevronDown);
+library.add(faAngleDown);
+library.add(faAngleUp);
 
 export default {
   components: {
@@ -34,9 +49,10 @@ export default {
   },
   data: function() {
     return {
-      isShowing: true,
+      isShowing: false,
       firstShow: false,
-      animation: ''
+      animation: '',
+      moreGrow: false
     }
   },
   methods: {
@@ -76,10 +92,36 @@ String.prototype.toSeconds = function() {
 </script>
 
 <style>
+/* fa-arrows */
+.angle-down {
+  margin-top: -6px;
+  vertical-align: 1em;
+  cursor: pointer;
+  transition: all 0.1s ease;
+}
+.angle-down:hover{
+  transform:scale(1.25, 1);
+}
+.angle-up {
+  margin-bottom: -8px;
+  vertical-align: -0.125em;
+  cursor: pointer;
+  transition: all 0.1s ease;
+  position: relative;
+  top: 0;
+}
+.angle-up:hover{
+  transform:scale(1.25, 1);
+}
+.grow {
+  transform:scale(1.25, 1);
+}
+
 /* wraps the button and the grid */
 .movementBoxWrapper {
   position: relative;
   z-index: 4;
+  margin-top: 2px;
 }
 .movementBoxWrapper p {
   margin-top: 0px;
@@ -88,14 +130,16 @@ String.prototype.toSeconds = function() {
 
 /* The MOVEMENTS button */
 .showMoreMvmts {
-  height: 20px;
+  height: auto;
   position: relative;
   z-index: 2;
 }
+
 .showMoreMvmts p {
   font-family: 'Nunito Sans', sans-serif;
   font-size: 13px;
-  display: inline-block;
+  margin: 0px;
+  display: block;
   cursor: pointer;
 }
 
@@ -124,6 +168,14 @@ String.prototype.toSeconds = function() {
 .mvmt:hover {
   background-color: #02552b;
   color: #fff;
+}
+
+/* Shift things around when you animate */
+.upShiftMargin {
+  margin-top: -19px;
+}
+.upShiftTop {
+  top: -32px;
 }
 
 </style>
