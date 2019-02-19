@@ -2,6 +2,7 @@
   <div class="coverImage"
     v-on:mouseover="coverHover=true"
     v-on:mouseleave="coverHover=false"
+    v-on:click="openPdfModal"
     >
     <img v-bind:src="`${publicPath}CO3_cover.jpg`"/>
     <font-awesome
@@ -11,24 +12,10 @@
       v-on:mouseover="coverHover=true"
       v-on:mouseleave="coverHover=false"
     />
-      <div>
-      <button
-        type="button"
-        class="btn"
-        @click="isModalVisible=true"
-      >
-        Open Modal!
-      </button>
-      <pdf-modal
-        v-show="isModalVisible"
-        @close="isModalVisible=false"
-      />
-      </div>
     </div>
 </template>
 
 <script>
-import pdfModal from '@/components/pdf-modal.vue'
 import { library } from '@fortawesome/fontawesome-svg-core'
 import { faEye } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
@@ -36,16 +23,19 @@ import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
 library.add(faEye);
 
 export default {
-  name: 'pdf-viewer',
+  name: 'cover-viewer',
   components: {
-    'font-awesome': FontAwesomeIcon,
-    pdfModal
+    'font-awesome': FontAwesomeIcon
   },
   data: function() {
     return {
       publicPath: process.env.BASE_URL,
       coverHover: false,
-      isModalVisible: false,
+    }
+  },
+  methods: {
+    openPdfModal: function() {
+      this.$emit('open');
     }
   }
 }

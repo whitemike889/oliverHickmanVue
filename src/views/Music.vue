@@ -6,7 +6,14 @@
     <div class="content">
       <h1> MUSIC </h1>
       <div class="pieceWrapper" v-for='(piece,index) in $options.musicData'>
-        <pdf-viewer class="pdfCover" />
+        <cover-viewer
+          class="cover"
+          v-on:open="loadPdfInModal"
+        />
+        <pdf-modal
+          v-show="isPdfModalVisible"
+          v-on:close="closePdfModal"
+        />
         <audio-player class="audioPlayer"
           :index="index"
           :title="piece.title"
@@ -14,7 +21,7 @@
           :waveform="piece.waveform"
           :audio="piece.audio"
           :mvmts="validateMovements(piece.movements)"
-        ></audio-player>
+        />
       </div>
     </div>
   </div>
@@ -22,20 +29,43 @@
 
 <script>
 import AudioPlayer from '@/components/audioPlayer.vue';
-import pdfViewer from '@/components/pdfViewer.vue';
+import coverViewer from '@/components/coverViewer.vue';
+import pdfModal from '@/components/pdf-modal.vue';
+import EventBus from '../eventBus.js';
 import musicData from '@/musicData.json';
+
+// const publicPath = process.env.BASE_URL;
 
 export default {
   components: {
     AudioPlayer,
-    pdfViewer
+    coverViewer,
+    pdfModal
   },
   musicData: musicData,
+  data: function() {
+    return {
+      isPdfModalVisible: false,
+    }
+  },
   methods: {
     validateMovements: function (piece) {
       //return the movements if exist or false
       return (typeof piece !== 'undefined' ? piece : false);
+    },
+    loadPdfInModal: function() {
+      // this.isPdfModalVisible = true
+      EventBus.$emit('loadPdf');
+    },
+    closePdfModal: function() {
+      this.isPdfModalVisible = false
     }
+  },
+  mounted() {
+    let self = this;
+    EventBus.$on('openPdfModal', function() {
+      self.isPdfModalVisible = true;
+    })
   }
 }
 </script>
@@ -64,7 +94,7 @@ export default {
   grid-column-gap: 5px;
 }
 
-.pdfCover {
+.cover {
   grid-column: cover;
 }
 </style>
