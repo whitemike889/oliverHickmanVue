@@ -1,16 +1,17 @@
 <template>
-    <div class="coverImage"
+  <div class="coverImage"
+    v-on:mouseover="coverHover=true"
+    v-on:mouseleave="coverHover=false"
+    v-on:click="openPdfModal"
+    >
+    <img v-bind:src="`${publicPath}CO3_cover.jpg`"/>
+    <font-awesome
+      icon="eye"
+      class="fa-eye"
+      v-bind:class="{faEyeHover: coverHover}"
       v-on:mouseover="coverHover=true"
       v-on:mouseleave="coverHover=false"
-      >
-      <img v-bind:src="`${publicPath}CO3_cover.jpg`"/>
-      <font-awesome
-        icon="eye"
-        class="fa-eye"
-        v-bind:class="{faEyeHover: coverHover}"
-        v-on:mouseover="coverHover=true"
-        v-on:mouseleave="coverHover=false"
-      />
+    />
     </div>
 </template>
 
@@ -22,14 +23,19 @@ import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
 library.add(faEye);
 
 export default {
-  name: 'pdf-viewer',
+  name: 'cover-viewer',
   components: {
     'font-awesome': FontAwesomeIcon
   },
   data: function() {
     return {
       publicPath: process.env.BASE_URL,
-      coverHover: false
+      coverHover: false,
+    }
+  },
+  methods: {
+    openPdfModal: function() {
+      this.$emit('open');
     }
   }
 }
@@ -39,6 +45,8 @@ export default {
 .coverImage{
   grid-column: cover;
   position: relative;
+  /* make sure this is on top or modal won't work */
+  z-index: 25;
 }
 .coverImage img{
   width: 100%;

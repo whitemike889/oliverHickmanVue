@@ -53,6 +53,8 @@ export default {
     //this binds the event listener on mount
     this.player.on('timeupdate', this.updatePlaybackBar);
     //listens on the EventBus for a new timecode from movementsBox. Updates current time
+    //I'm using the EventBus instead of a custom event because I need to send a dynamic event handler.
+    //Can't figure out an elgant solution to this with events.
     EventBus.$on(`newTimecode_${this.index}`, timecode => {
       this.player.currentTime = timecode;
     });
