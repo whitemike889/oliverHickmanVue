@@ -5,14 +5,18 @@
     </div>
     <div class="content">
       <h1> MUSIC </h1>
-      <div class="pieceWrapper" v-for='(piece,index) in $options.musicData'>
+      <div
+        class="pieceWrapper"
+        v-for='(piece,index) in $options.musicData'
+      >
         <cover-viewer
           class="cover"
-          v-on:open="openPdfModal"
+          :index="index"
         />
         <pdf-modal
-          v-show="isPdfModalVisible"
-          v-on:close="closePdfModal"
+          v-show="pdfData[index].thisModalIsShowing"
+          :index="index"
+          :file="pdfData[index].file"
         />
         <audio-player class="audioPlayer"
           :index="index"
@@ -32,6 +36,7 @@ import AudioPlayer from '@/components/audioPlayer.vue';
 import coverViewer from '@/components/coverViewer.vue';
 import pdfModal from '@/components/pdf-modal.vue';
 import musicData from '@/musicData.json';
+import EventBus from '../eventBus.js';
 
 // const publicPath = process.env.BASE_URL;
 
@@ -44,7 +49,7 @@ export default {
   musicData: musicData,
   data: function() {
     return {
-      isPdfModalVisible: false,
+      pdfData: [], //this is populated beforeMount
     }
   },
   methods: {
@@ -52,14 +57,29 @@ export default {
       //return the movements if exist or false
       return (typeof piece !== 'undefined' ? piece : false);
     },
-    openPdfModal: function() {
-      // this.isPdfModalVisible = true
-      this.isPdfModalVisible = true;
-    },
-    closePdfModal: function() {
-      this.isPdfModalVisible = false;
+    togglePdfModal: function(index) {
+      this.pdfData[index].thisModalIsShowing = !this.pdfData[index].thisModalIsShowing;
+      this.$forceUpdate(); //Either I don't understand Vue or it's a bug. Not sure why I need to do this...
     }
   },
+  mounted() {
+    EventBus.$on('openPdfModal', (index) => {
+      this.togglePdfModal(index);
+    });
+    EventBus.$on('closePdfModal', (index) => {
+      this.togglePdfModal(index);
+    });
+  },
+  beforeMount() {
+    //make an array of data that the PDF modal will use
+    let that = this;
+    musicData.forEach(function(music, index) {
+      that.pdfData[index] = {
+        file: music.pdf,
+        thisModalIsShowing: false
+      };
+    });
+  }
 }
 </script>
 
@@ -85,6 +105,7 @@ export default {
   grid-template-rows: 200px;
   grid-template-columns: [cover] 155px [player] auto;
   grid-column-gap: 5px;
+  padding-bottom: 30px;
 }
 
 .cover {

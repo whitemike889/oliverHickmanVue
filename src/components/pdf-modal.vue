@@ -21,9 +21,11 @@
 </template>
 
 <script>
+import EventBus from '../eventBus.js';
 
 export default {
   name: 'pdf-modal',
+  props: ['index', 'file'],
   data: function() {
     return {
       publicPath: process.env.BASE_URL,
@@ -35,29 +37,31 @@ export default {
   },
   methods: {
     close() {
-      this.$emit('close');
-    }
+      EventBus.$emit('closePdfModal', this.index);
+    },
+    fetchPDF() {
+      console.log("HERE");
+      import(
+        /* webpackChunkName: 'pdfjs-dist' */
+        'pdfjs-dist/webpack'
+      ).
+        // then(pdfjs => pdfjs.getDocument(this.url)).
+        // then(pdf => (this.pdf = pdf)).
+        // then(() => log('pdf fetched'))
+        then(console.log("LOADED"));
+    },
   },
 };
 </script>
 
 <style>
-
-/* .pdfWrapper canvas {
-  height:calc(100vh - 15%);
-  width: auto;
-} */
-
-
-
-
   .modal-backdrop {
     position: fixed;
     top: 0;
     bottom: 0;
     left: 0;
     right: 0;
-    background-color: rgba(0, 0, 0, 0.1);
+    background-color: rgba(0, 0, 0, 0.5);
     display: flex;
     justify-content: center;
     align-items: center;

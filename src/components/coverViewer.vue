@@ -20,10 +20,13 @@ import { library } from '@fortawesome/fontawesome-svg-core'
 import { faEye } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
 
+import EventBus from '../eventBus.js';
+
 library.add(faEye);
 
 export default {
   name: 'cover-viewer',
+  props: ['index'],
   components: {
     'font-awesome': FontAwesomeIcon
   },
@@ -35,7 +38,7 @@ export default {
   },
   methods: {
     openPdfModal: function() {
-      this.$emit('open');
+      EventBus.$emit('openPdfModal', this.index);
     }
   }
 }
