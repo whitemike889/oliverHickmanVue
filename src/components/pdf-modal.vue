@@ -30,7 +30,8 @@ export default {
     return {
       publicPath: process.env.BASE_URL,
       source: undefined,
-      numPages: undefined
+      numPages: undefined,
+      pdf: undefined
     }
   },
   components: {
@@ -39,18 +40,22 @@ export default {
     close() {
       EventBus.$emit('closePdfModal', this.index);
     },
-    fetchPDF() {
-      console.log("HERE");
-      import(
-        /* webpackChunkName: 'pdfjs-dist' */
-        'pdfjs-dist/webpack'
-      ).
-        // then(pdfjs => pdfjs.getDocument(this.url)).
-        // then(pdf => (this.pdf = pdf)).
-        // then(() => log('pdf fetched'))
-        then(console.log("LOADED"));
+    async fetchPDF() {
+      let url = `/${this.file}`;
+        console.log("GOT URL");
+      let PDFJS = await import('pdfjs-dist/webpack'); /* webpackChunkName: 'pdfjs-dist' */
+        console.log("LOADED PDFJS");
+      let pdf = await PDFJS.getDocument(url);
+        console.log("GOT PDF");
+      this.pdf = pdf;
     },
   },
+  mounted() {
+    let that = this;
+    EventBus.$on('openPdfModal', function(index) {
+      if (that.index == index) { that.fetchPDF() }
+    });
+  }
 };
 </script>
 
