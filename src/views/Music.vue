@@ -34,7 +34,7 @@
 <script>
 import AudioPlayer from '@/components/audioPlayer.vue';
 import coverViewer from '@/components/coverViewer.vue';
-import pdfModal from '@/components/pdf-modal.vue';
+import pdfModal from '@/components/pdf/pdf-modal.vue';
 import musicData from '@/musicData.json';
 import EventBus from '../eventBus.js';
 

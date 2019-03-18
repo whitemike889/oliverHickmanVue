@@ -2,7 +2,14 @@
   <transition name="modal-fade">
     <div class="modal-backdrop">
       <div class="modal">
-
+        <div class="pdf-document">
+          <PDFPage
+            v-for="page in pages"
+            v-bind="{scale}"
+            :key="page.pageNumber"
+            :page="page"
+          />
+        </div>
          <footer class="modal-footer">
             <slot name="footer">
               I'm the default footer!
@@ -21,20 +28,22 @@
 </template>
 
 <script>
-import EventBus from '../eventBus.js';
+import PDFPage from './PDFPage';
+import range from 'lodash/range';
+import EventBus from '../../eventBus.js';
 
 export default {
   name: 'pdf-modal',
   props: ['index', 'file'],
   data: function() {
     return {
-      publicPath: process.env.BASE_URL,
-      source: undefined,
-      numPages: undefined,
-      pdf: undefined
+      pages: [],
+      pdf: undefined,
+      scale: 0.75
     }
   },
   components: {
+    PDFPage
   },
   methods: {
     close() {
@@ -55,11 +64,28 @@ export default {
     EventBus.$on('openPdfModal', function(index) {
       if (that.index == index) { that.fetchPDF() }
     });
-  }
+  },
+  watch: {
+    pdf: {
+      handler(pdf) {
+        this.pages = [];
+        const promises = range(1, pdf.numPages).map(number => pdf.getPage(number));
+        return Promise.all(promises).
+          then(pages => (this.pages = pages)).
+          then(() => console.log('pages fetched'))
+      }
+    },
+  },
 };
 </script>
 
 <style>
+  .pdf-document {
+    position: fixed;
+    overflow: scroll;
+    width: 100%;
+    height: 90%;
+  }
   .modal-backdrop {
     position: fixed;
     top: 0;
@@ -67,25 +93,25 @@ export default {
     left: 0;
     right: 0;
     background-color: rgba(0, 0, 0, 0.5);
-    display: flex;
+    /* display: flex;
     justify-content: center;
-    align-items: center;
+    align-items: center; */
     z-index: 9998;
   }
   .modal {
     background: #FFFFFF;
     box-shadow: 0px 0px 20px 1px #282828;
     overflow-x: auto;
-    display: flex;
-    flex-direction: column;
+    /* display: flex;
+    flex-direction: column; */
   }
   .modal-footer {
     padding: 15px;
-    display: flex;
+    /* display: flex; */
   }
   .modal-footer {
     border-top: 1px solid #eeeeee;
-    justify-content: flex-end;
+    /* justify-content: flex-end; */
   }
   .btn-green {
     color: white;
