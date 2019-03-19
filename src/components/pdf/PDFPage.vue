@@ -1,19 +1,22 @@
 <script>
-import debug from 'debug';
-const log = debug('app:vue_features/documents/components/PDFPage');
+// import debug from 'debug';
+// const log = debug('app:vue_features/documents/components/PDFPage');
 
 export default {
   props: ['page', 'scale'],
 
   computed: {
     actualSizeViewport() {
+      console.log(this.viewport.clone({scale: this.scale}));
       return this.viewport.clone({scale: this.scale});
     },
 
     canvasStyle() {
       const {width: actualSizeWidth, height: actualSizeHeight} = this.actualSizeViewport;
       const pixelRatio = window.devicePixelRatio || 1;
-      const [pixelWidth, pixelHeight] = [actualSizeWidth, actualSizeHeight].map(dim => Math.ceil(dim / pixelRatio));
+      const scaleRatio = (window.innerHeight - 48 /*48 is the height of the navBar*/ ) / actualSizeHeight;
+      console.log(scaleRatio);
+      const [pixelWidth, pixelHeight] = [actualSizeWidth, actualSizeHeight].map(dim => Math.ceil((dim / pixelRatio) * scaleRatio));
       return `width: ${pixelWidth}px; height: ${pixelHeight}px;`
     },
 
@@ -41,9 +44,8 @@ export default {
       // PDFPageProxy#render
       // https://mozilla.github.io/pdf.js/api/draft/PDFPageProxy.html
       this.renderTask = this.page.render(this.getRenderContext());
-      this.renderTask.
-        then(() => this.$emit('rendered', this.page)).
-        then(() => log(`Page ${this.pageNumber} rendered`));
+      this.renderTask.then(() => this.$emit('rendered', this.page));
+        // then(() => console.log(`Page ${this.pageNumber} rendered`));
     },
 
     destroyPage(page) {
@@ -79,7 +81,7 @@ export default {
   },
 
   mounted() {
-    log(`Page ${this.pageNumber} mounted`);
+    // console.log(`Page ${this.pageNumber} mounted`);
     this.renderPage();
   },
 

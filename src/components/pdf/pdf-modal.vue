@@ -2,35 +2,38 @@
   <transition name="modal-fade">
     <div class="modal-backdrop">
       <div class="modal">
-        <div class="pdf-document">
-          <PDFPage
-            v-for="page in pages"
-            v-bind="{scale}"
-            :key="page.pageNumber"
-            :page="page"
-          />
-        </div>
-         <footer class="modal-footer">
-            <slot name="footer">
-              I'm the default footer!
-              <button
-                type="button"
-                class="btn-green"
-                @click="close"
-              >
-                Close me!
-            </button>
-          </slot>
-        </footer>
-      </div>
+        <div class="nav-cover"></div>
+        <font-awesome
+          icon="times"
+          class="fa-times"
+          @click="close"
+        />
+        <div class="pdf-wrapper">
+          <div class="pdf-document">
+            <PDFPage
+              v-for="page in pages"
+              v-bind="{scale}"
+              :key="page.pageNumber"
+              :page="page"
+            />
+          </div>
+        </div> <!-- end pdf-wrapper -->
+      </div> <!-- end modal -->
     </div>
   </transition>
 </template>
 
 <script>
+//stuff for pdf modal
 import PDFPage from './PDFPage';
 import range from 'lodash/range';
+
 import EventBus from '../../eventBus.js';
+// stuff for font awesome
+import { library } from '@fortawesome/fontawesome-svg-core'
+import { faTimes } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
+library.add(faTimes);
 
 export default {
   name: 'pdf-modal',
@@ -39,11 +42,12 @@ export default {
     return {
       pages: [],
       pdf: undefined,
-      scale: 0.75
+      scale: 1,
     }
   },
   components: {
-    PDFPage
+    PDFPage,
+    'font-awesome': FontAwesomeIcon
   },
   methods: {
     close() {
@@ -57,12 +61,15 @@ export default {
       let pdf = await PDFJS.getDocument(url);
         console.log("GOT PDF");
       this.pdf = pdf;
-    },
+    }
   },
   mounted() {
-    let that = this;
+    let that = this; //I hate doing this so much is there a better way?
     EventBus.$on('openPdfModal', function(index) {
-      if (that.index == index) { that.fetchPDF() }
+      if (that.index == index) {
+        //get pdf
+        that.fetchPDF()
+      }
     });
   },
   watch: {
@@ -80,11 +87,31 @@ export default {
 </script>
 
 <style>
+  .pdf-wrapper{
+    position: absolute;
+    top: 42px;
+  }
+  .fa-times{
+    position: absolute;
+    top: 13px;
+    left: 15px;
+    color: #fff;
+    cursor: pointer;
+    transform:scale(2, 2);
+    z-index: 9001;
+  }
   .pdf-document {
     position: fixed;
     overflow: scroll;
     width: 100%;
-    height: 90%;
+    height: 100%;
+  }
+  .nav-cover{
+    background-color: #012a15;
+    top: 0;
+    width: 100vw;
+    height: 42px;
+    z-index: 8999;
   }
   .modal-backdrop {
     position: fixed;
@@ -93,25 +120,18 @@ export default {
     left: 0;
     right: 0;
     background-color: rgba(0, 0, 0, 0.5);
-    /* display: flex;
-    justify-content: center;
-    align-items: center; */
-    z-index: 9998;
+    z-index: 9000;
   }
   .modal {
     background: #FFFFFF;
     box-shadow: 0px 0px 20px 1px #282828;
     overflow-x: auto;
-    /* display: flex;
-    flex-direction: column; */
   }
   .modal-footer {
     padding: 15px;
-    /* display: flex; */
   }
   .modal-footer {
     border-top: 1px solid #eeeeee;
-    /* justify-content: flex-end; */
   }
   .btn-green {
     color: white;
