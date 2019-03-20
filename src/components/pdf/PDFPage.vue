@@ -1,13 +1,15 @@
 <script>
-// import debug from 'debug';
-// const log = debug('app:vue_features/documents/components/PDFPage');
+import EventBus from '../../eventBus.js';
 
 export default {
   props: ['page', 'scale'],
-
+  data: function() {
+    return {
+      scaleRatio: undefined
+    }
+  },
   computed: {
     actualSizeViewport() {
-      console.log(this.viewport.clone({scale: this.scale}));
       return this.viewport.clone({scale: this.scale});
     },
 
@@ -15,8 +17,7 @@ export default {
       const {width: actualSizeWidth, height: actualSizeHeight} = this.actualSizeViewport;
       const pixelRatio = window.devicePixelRatio || 1;
       const scaleRatio = (window.innerHeight - 48 /*48 is the height of the navBar*/ ) / actualSizeHeight;
-      console.log(scaleRatio);
-      const [pixelWidth, pixelHeight] = [actualSizeWidth, actualSizeHeight].map(dim => Math.ceil((dim / pixelRatio) * scaleRatio));
+      const [pixelWidth, pixelHeight] = [actualSizeWidth, actualSizeHeight].map(dim => Math.ceil((dim / pixelRatio) * (scaleRatio * this.scale)));
       return `width: ${pixelWidth}px; height: ${pixelHeight}px;`
     },
 
@@ -36,16 +37,18 @@ export default {
 
     pageNumber() {
       return this.page.pageNumber;
-    },
+    }
   },
 
   methods: {
-    renderPage() {
+    async renderPage() {
       // PDFPageProxy#render
       // https://mozilla.github.io/pdf.js/api/draft/PDFPageProxy.html
-      this.renderTask = this.page.render(this.getRenderContext());
-      this.renderTask.then(() => this.$emit('rendered', this.page));
-        // then(() => console.log(`Page ${this.pageNumber} rendered`));
+      try {
+        this.renderTask = await this.page.render(this.getRenderContext());
+      } catch(error) {
+        console.log("ERROR CAUGHT", error);
+      }
     },
 
     destroyPage(page) {
@@ -72,6 +75,9 @@ export default {
     page(page, oldPage) {
       this.destroyPage(oldPage);
     },
+    // scale() {
+    //   this.destroyPage(this.page);
+    // }
   },
 
   created() {

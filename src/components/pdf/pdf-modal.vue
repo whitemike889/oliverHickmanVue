@@ -8,13 +8,18 @@
           class="fa-times"
           @click="close"
         />
+        <font-awesome
+          icon="times"
+          class="fa-zoom"
+          @click="zoomIn"
+        />
         <div class="pdf-wrapper">
-          <div class="pdf-document">
+          <div class="pdf-document" :key="scale">
             <PDFPage
               v-for="page in pages"
-              v-bind="{scale}"
               :key="page.pageNumber"
               :page="page"
+              :scale="scale"
             />
           </div>
         </div> <!-- end pdf-wrapper -->
@@ -37,7 +42,9 @@ library.add(faTimes);
 
 export default {
   name: 'pdf-modal',
+
   props: ['index', 'file'],
+
   data: function() {
     return {
       pages: [],
@@ -45,14 +52,17 @@ export default {
       scale: 1,
     }
   },
+
   components: {
     PDFPage,
     'font-awesome': FontAwesomeIcon
   },
+
   methods: {
     close() {
       EventBus.$emit('closePdfModal', this.index);
     },
+
     async fetchPDF() {
       let url = `/${this.file}`;
         console.log("GOT URL");
@@ -61,8 +71,25 @@ export default {
       let pdf = await PDFJS.getDocument(url);
         console.log("GOT PDF");
       this.pdf = pdf;
-    }
+    },
+
+    zoomIn() {
+      this.scale *= 1.25;
+    },
+
+    updateLayout() {
+      // this.pages = [];
+
+      // this.$nextTick(function(){
+      //   let pdf = this.pdf;
+      //   const promises = range(1, pdf.numPages+1).map(number => pdf.getPage(number));
+      //   return Promise.all(promises).
+      //     then(pages => (this.pages = pages)).
+      //     then(() => console.log("RELOADED"))
+      // });
+    },
   },
+
   mounted() {
     let that = this; //I hate doing this so much is there a better way?
     EventBus.$on('openPdfModal', function(index) {
@@ -72,16 +99,17 @@ export default {
       }
     });
   },
+
   watch: {
     pdf: {
       handler(pdf) {
         this.pages = [];
-        const promises = range(1, pdf.numPages).map(number => pdf.getPage(number));
+        const promises = range(1, pdf.numPages+1).map(number => pdf.getPage(number));
         return Promise.all(promises).
-          then(pages => (this.pages = pages)).
-          then(() => console.log('pages fetched'))
+          then(pages => (this.pages = pages));
+          // then(() => console.log(this.pages))
       }
-    },
+    }
   },
 };
 </script>
@@ -95,6 +123,15 @@ export default {
     position: absolute;
     top: 13px;
     left: 15px;
+    color: #fff;
+    cursor: pointer;
+    transform:scale(2, 2);
+    z-index: 9001;
+  }
+  .fa-zoom{
+    position: absolute;
+    top: 13px;
+    left: 50px;
     color: #fff;
     cursor: pointer;
     transform:scale(2, 2);
