@@ -3,6 +3,13 @@
     <div class="modal-backdrop">
       <div class="modal">
         <div class="nav-cover"></div>
+        <progress-bar
+          class="loadingBar"
+          :val="loadingProgress"
+          bg-color="#b3b4b4"
+          bar-color="#012a15"
+          bar-transition="all 0.1s ease"
+        ></progress-bar>
         <font-awesome
           icon="times"
           class="fa-times"
@@ -32,6 +39,7 @@
 //stuff for pdf modal
 import PDFPage from './PDFPage';
 import range from 'lodash/range';
+import ProgressBar from 'vue-simple-progress'
 
 import EventBus from '../../eventBus.js';
 // stuff for font awesome
@@ -48,18 +56,24 @@ export default {
       pages: [],
       pdf: undefined,
       scale: 1,
-      url: ''
+      url: '',
+      progressArray: [],
+      loadingProgress: 0,
+      loadingEndPointScale: 0
     }
   },
 
   components: {
     PDFPage,
-    'font-awesome': FontAwesomeIcon
+    'font-awesome': FontAwesomeIcon,
+    ProgressBar
   },
 
   methods: {
     close() {
+      this.clearProgress();
       EventBus.$emit('closePdfModal');
+      this.scale = 1;
     },
 
     async fetchPDF() {
@@ -71,8 +85,14 @@ export default {
     },
 
     zoomIn() {
+      this.clearProgress();
       this.scale += 0.1;
     },
+
+    clearProgress() {
+      this.progressArray = [];
+      this.loadingProgress = 0;
+    }
   },
 
   mounted() {
@@ -84,7 +104,10 @@ export default {
     });
 
     EventBus.$on('PAGE_RENDERED', function(page) {
-      console.log(page);
+      that.progressArray.push(page);
+      that.loadingProgress = that.progressArray.length * that.loadingEndPointScale;
+      console.log(that.loadingProgress);
+      // console.log('rendering page', that.progressArray);
     });
   },
 
@@ -94,7 +117,11 @@ export default {
         this.pages = [];
         const promises = range(1, pdf.numPages+1).map(number => pdf.getPage(number));
         return Promise.all(promises).
-          then(pages => (this.pages = pages));
+          then( (pages) => {
+            this.pages = pages
+            let loadingEndPoint = pages.length
+            this.loadingEndPointScale = 100 / loadingEndPoint;
+          });
           // then(() => console.log(this.pages))
       }
     }
@@ -137,6 +164,11 @@ export default {
     width: 100vw;
     height: 42px;
     z-index: 8999;
+  }
+  .loadingBar {
+    position: relative;
+    z-index: 8999;
+    margin-top: -3px;
   }
   .modal-backdrop {
     position: fixed;
