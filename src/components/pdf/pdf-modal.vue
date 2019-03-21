@@ -43,13 +43,12 @@ library.add(faTimes);
 export default {
   name: 'pdf-modal',
 
-  props: ['index', 'file'],
-
   data: function() {
     return {
       pages: [],
       pdf: undefined,
       scale: 1,
+      url: ''
     }
   },
 
@@ -60,43 +59,32 @@ export default {
 
   methods: {
     close() {
-      EventBus.$emit('closePdfModal', this.index);
+      EventBus.$emit('closePdfModal');
     },
 
     async fetchPDF() {
-      let url = `/${this.file}`;
-        console.log("GOT URL");
       let PDFJS = await import('pdfjs-dist/webpack'); /* webpackChunkName: 'pdfjs-dist' */
-        console.log("LOADED PDFJS");
-      let pdf = await PDFJS.getDocument(url);
-        console.log("GOT PDF");
+        console.log("LOADING DOCUMENT");
+      let pdf = await PDFJS.getDocument(this.url);
+        console.log("RENDERING PDF");
       this.pdf = pdf;
     },
 
     zoomIn() {
-      this.scale *= 1.25;
-    },
-
-    updateLayout() {
-      // this.pages = [];
-
-      // this.$nextTick(function(){
-      //   let pdf = this.pdf;
-      //   const promises = range(1, pdf.numPages+1).map(number => pdf.getPage(number));
-      //   return Promise.all(promises).
-      //     then(pages => (this.pages = pages)).
-      //     then(() => console.log("RELOADED"))
-      // });
+      this.scale += 0.1;
     },
   },
 
   mounted() {
     let that = this; //I hate doing this so much is there a better way?
-    EventBus.$on('openPdfModal', function(index) {
-      if (that.index == index) {
-        //get pdf
-        that.fetchPDF()
-      }
+    EventBus.$on('LOAD_PDF', function(file) {
+      that.url = file;
+        console.log(`FETCHING URL: ${that.url}`);
+      that.fetchPDF();
+    });
+
+    EventBus.$on('PAGE_RENDERED', function(page) {
+      console.log(page);
     });
   },
 

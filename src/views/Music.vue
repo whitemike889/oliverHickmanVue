@@ -5,6 +5,9 @@
     </div>
     <div class="content">
       <h1> MUSIC </h1>
+      <pdf-modal
+        v-show="modalIsShowing"
+      />
       <div
         class="pieceWrapper"
         v-for='(piece,index) in $options.musicData'
@@ -12,11 +15,6 @@
         <cover-viewer
           class="cover"
           :index="index"
-        />
-        <pdf-modal
-          v-show="pdfData[index].thisModalIsShowing"
-          :index="index"
-          :file="pdfData[index].file"
         />
         <audio-player class="audioPlayer"
           :index="index"
@@ -50,6 +48,8 @@ export default {
   data: function() {
     return {
       pdfData: [], //this is populated beforeMount
+      modalIsShowing: false,
+      pdfForModal: undefined
     }
   },
   methods: {
@@ -57,17 +57,19 @@ export default {
       //return the movements if exist or false
       return (typeof piece !== 'undefined' ? piece : false);
     },
-    togglePdfModal: function(index) {
-      this.pdfData[index].thisModalIsShowing = !this.pdfData[index].thisModalIsShowing;
-      this.$forceUpdate(); //Either I don't understand Vue or it's a bug. Not sure why I need to do this...
+    togglePdfModal: function() {
+        this.modalIsShowing = !this.modalIsShowing;
     }
   },
+
   mounted() {
-    EventBus.$on('openPdfModal', (index) => {
-      this.togglePdfModal(index);
-    });
-    EventBus.$on('closePdfModal', (index) => {
-      this.togglePdfModal(index);
+    EventBus.$on('openPdfModal', (clickIndex) => {
+      this.togglePdfModal();
+      this.pdfForModal = this.pdfData[clickIndex]['file'];
+      EventBus.$emit('LOAD_PDF', this.pdfData[clickIndex]['file'])
+      });
+    EventBus.$on('closePdfModal', () => {
+      this.togglePdfModal();
     });
   },
   beforeMount() {
@@ -76,7 +78,6 @@ export default {
     musicData.forEach(function(music, index) {
       that.pdfData[index] = {
         file: music.pdf,
-        thisModalIsShowing: false
       };
     });
   }

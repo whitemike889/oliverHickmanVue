@@ -46,6 +46,7 @@ export default {
       // https://mozilla.github.io/pdf.js/api/draft/PDFPageProxy.html
       try {
         this.renderTask = await this.page.render(this.getRenderContext());
+        EventBus.$emit("PAGE_RENDERED", this.pageNumber);
       } catch(error) {
         console.log("ERROR CAUGHT", error);
       }
@@ -53,11 +54,9 @@ export default {
 
     destroyPage(page) {
       if (!page) return;
-
       // PDFPageProxy#_destroy
       // https://mozilla.github.io/pdf.js/api/draft/PDFPageProxy.html
       page._destroy();
-
       // RenderTask#cancel
       // https://mozilla.github.io/pdf.js/api/draft/RenderTask.html
       if (this.renderTask) this.renderTask.cancel();
@@ -87,7 +86,6 @@ export default {
   },
 
   mounted() {
-    // console.log(`Page ${this.pageNumber} mounted`);
     this.renderPage();
   },
 
