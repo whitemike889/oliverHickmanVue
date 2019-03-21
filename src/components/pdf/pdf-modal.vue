@@ -12,13 +12,18 @@
         ></progress-bar>
         <font-awesome
           icon="times"
-          class="fa-times"
+          class="fa fa-times"
           @click="close"
         />
         <font-awesome
-          icon="times"
-          class="fa-zoom"
-          @click="zoomIn"
+          icon="search-plus"
+          class="fa fa-zoom"
+          @click="zoomIn(0.1)"
+        />
+        <font-awesome
+          icon="search-minus"
+          class="fa fa-zoom-out"
+          @click="zoomOut(0.1)"
         />
         <div class="pdf-wrapper">
           <div class="pdf-document" :key="scale">
@@ -44,9 +49,9 @@ import ProgressBar from 'vue-simple-progress'
 import EventBus from '../../eventBus.js';
 // stuff for font awesome
 import { library } from '@fortawesome/fontawesome-svg-core'
-import { faTimes } from '@fortawesome/free-solid-svg-icons';
+import { faTimes, faSearchPlus, faSearchMinus } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
-library.add(faTimes);
+library.add(faTimes, faSearchPlus, faSearchMinus);
 
 export default {
   name: 'pdf-modal',
@@ -59,7 +64,7 @@ export default {
       url: '',
       progressArray: [],
       loadingProgress: 0,
-      loadingEndPointScale: 0
+      loadingEndPointScale: 0,
     }
   },
 
@@ -70,12 +75,6 @@ export default {
   },
 
   methods: {
-    close() {
-      this.clearProgress();
-      EventBus.$emit('closePdfModal');
-      this.scale = 1;
-    },
-
     async fetchPDF() {
       let PDFJS = await import('pdfjs-dist/webpack'); /* webpackChunkName: 'pdfjs-dist' */
         console.log("LOADING DOCUMENT");
@@ -84,18 +83,33 @@ export default {
       this.pdf = pdf;
     },
 
-    zoomIn() {
+    zoomIn(inc) {
       this.clearProgress();
-      this.scale += 0.1;
+      this.scale += inc;
+      this.userScale = Math.floor(this.scale * 100);
+    },
+
+    zoomOut(dec) {
+      this.clearProgress();
+      this.scale -= dec;
+      this.userScale = Math.floor(this.scale * 100);
     },
 
     clearProgress() {
       this.progressArray = [];
       this.loadingProgress = 0;
-    }
+    },
+
+    close() {
+      this.clearProgress();
+      this.scale = 1;
+      EventBus.$emit('closePdfModal');
+    },
   },
 
   mounted() {
+    this.scale = 1
+
     let that = this; //I hate doing this so much is there a better way?
     EventBus.$on('LOAD_PDF', function(file) {
       that.url = file;
@@ -106,8 +120,6 @@ export default {
     EventBus.$on('PAGE_RENDERED', function(page) {
       that.progressArray.push(page);
       that.loadingProgress = that.progressArray.length * that.loadingEndPointScale;
-      console.log(that.loadingProgress);
-      // console.log('rendering page', that.progressArray);
     });
   },
 
@@ -124,7 +136,7 @@ export default {
           });
           // then(() => console.log(this.pages))
       }
-    }
+    },
   },
 };
 </script>
@@ -134,23 +146,24 @@ export default {
     position: absolute;
     top: 42px;
   }
-  .fa-times{
+  .fa {
     position: absolute;
     top: 13px;
-    left: 15px;
     color: #fff;
     cursor: pointer;
-    transform:scale(2, 2);
     z-index: 9001;
   }
-  .fa-zoom{
-    position: absolute;
-    top: 13px;
-    left: 50px;
-    color: #fff;
-    cursor: pointer;
+  .fa-times{
+    left: 15px;
     transform:scale(2, 2);
-    z-index: 9001;
+  }
+  .fa-zoom{
+    left: 50px;
+    transform:scale(1.6, 1.6);
+  }
+  .fa-zoom-out{
+    left: 85px;
+    transform:scale(1.6, 1.6);
   }
   .pdf-document {
     position: fixed;
