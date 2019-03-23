@@ -1,10 +1,10 @@
 <template>
   <div id="music">
     <div class="imgContainer1">
-      <img class="img" src="@/assets/img/Oliver+Kiersten-169.jpg" alt="noImg" @click="boostTestValue">
+      <img class="img" src="@/assets/img/Oliver+Kiersten-169.jpg" alt="noImg">
     </div>
     <div class="content">
-      <h1 @click='logTestState'> MUSIC {{ testState }}</h1>
+      <h1> MUSIC </h1>
       <pdf-modal v-show="modalIsShowing" />
       <div class="pieceWrapper"
         v-for='(piece,index) in $options.musicData'
@@ -31,13 +31,7 @@ import pdfModal from '@/components/pdf/pdf-modal.vue';
 
 //data
 import musicData from '@/musicData.json';
-import { mapState, mapActions } from 'vuex';
-// import { mapGetters } from 'vuex';
-
 import EventBus from '../eventBus.js';
-
-
-// const publicPath = process.env.BASE_URL;
 
 export default {
   components: {
@@ -64,22 +58,6 @@ export default {
     togglePdfModal: function() {
         this.modalIsShowing = !this.modalIsShowing;
     },
-
-    logTestState: function() {
-      console.log(this.testState);
-    },
-
-    ...mapActions(['boostTest']),
-
-    boostTestValue: function() {
-      this.boostTest(10);
-    }
-  },
-
-  computed: {
-    ...mapState({
-      testState: state => state.testState
-    }),
   },
 
   mounted() {

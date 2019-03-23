@@ -7,7 +7,7 @@
     />
     <img :src="`${publicPath}waveforms/${waveform}`" class="waveform" />
     <div class='songProgress'>
-      <div class='songProgressBar' v-bind:style="{ width:playbackPercent }"></div>
+      <div class='songProgressBar' v-bind:style="{ width:`${this.playbackPercent}%` }"></div>
     </div>
     <div class='player'>
       <vue-plyr ref="plyr">
@@ -21,10 +21,13 @@
 </template>
 
 <script>
+//stuff for vue player
 import { VuePlyr } from 'vue-plyr';
-import MovementsBox from '@/components/movementsBox.vue';
 import 'vue-plyr/dist/vue-plyr.css';
 import 'rangetouch/dist/rangetouch.js';
+
+import { mapState, mapActions, mapGetters } from 'vuex';
+import MovementsBox from '@/components/movementsBox.vue';
 import EventBus from '../eventBus.js';
 
 export default {
@@ -35,18 +38,17 @@ export default {
   },
   data: function() {
     return {
-      playbackPercent: '0%',
       publicPath: process.env.BASE_URL
     }
   },
   props: ['index', 'title', 'details', 'waveform', 'audio', 'mvmts'],
 
   methods: {
+    ...mapActions(['updatePlaybackPercent']),
     //this updates the bar as it progresses
     updatePlaybackBar: function() {
       let percent = (this.player.currentTime / this.duration) * 100;
-      let percentString = `${percent.toString()}%`
-      this.playbackPercent = percentString;
+      this.updatePlaybackPercent(percent);
     },
    },
   mounted () {
@@ -58,12 +60,15 @@ export default {
     EventBus.$on(`newTimecode_${this.index}`, timecode => {
       this.player.currentTime = timecode;
     });
+
   },
   computed: {
     //define the player object. Can now be accessed through this.player
     player () { return this.$refs.plyr.player },
     //returns the duration of the track
-    duration () { return this.$refs.plyr.player.duration }
+    duration () { return this.$refs.plyr.player.duration },
+
+    ...mapState(['playbackPercent'])
   }
 }
 </script>
