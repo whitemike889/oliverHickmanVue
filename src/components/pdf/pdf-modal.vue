@@ -2,29 +2,18 @@
   <transition name="modal-fade">
     <div class="modal-backdrop">
       <div class="modal">
-        <div class="nav-cover"></div>
-        <progress-bar
-          class="loadingBar"
-          :val="loadingProgress"
-          bg-color="#b3b4b4"
-          bar-color="#012a15"
-          bar-transition="all 0.1s ease"
-        ></progress-bar>
-        <font-awesome
-          icon="times"
-          class="fa fa-times"
-          @click="close"
-        />
-        <font-awesome
-          icon="search-plus"
-          class="fa fa-zoom"
-          @click="zoomIn(0.1)"
-        />
-        <font-awesome
-          icon="search-minus"
-          class="fa fa-zoom-out"
-          @click="zoomOut(0.1)"
-        />
+        <div class="nav-cover">
+          <progress-bar
+            class="loadingBar"
+            :val="loadingProgress"
+            bg-color="#b3b4b4"
+            bar-color="#012a15"
+            bar-transition="all 0.1s ease"
+          ></progress-bar>
+          <font-awesome icon="times" class="fa fa-times" @click="close"/>
+          <font-awesome icon="search-plus" class="fa fa-zoom" @click="zoomIn"/>
+          <font-awesome icon="search-minus" class="fa fa-zoom-out" @click="zoomOut"/>
+        </div> <!-- end nav-cover -->
         <div class="pdf-wrapper">
           <div class="pdf-document" :key="scale">
             <PDFPage
@@ -47,6 +36,7 @@ import range from 'lodash/range';
 import ProgressBar from 'vue-simple-progress'
 
 import EventBus from '../../eventBus.js';
+
 // stuff for font awesome
 import { library } from '@fortawesome/fontawesome-svg-core'
 import { faTimes, faSearchPlus, faSearchMinus } from '@fortawesome/free-solid-svg-icons';
@@ -61,6 +51,7 @@ export default {
       pages: [],
       pdf: undefined,
       scale: 1,
+      scaleChangeAmount: 0.1,
       url: '',
       progressArray: [],
       loadingProgress: 0,
@@ -77,21 +68,19 @@ export default {
   methods: {
     async fetchPDF() {
       let PDFJS = await import('pdfjs-dist/webpack'); /* webpackChunkName: 'pdfjs-dist' */
-        console.log("LOADING DOCUMENT");
       let pdf = await PDFJS.getDocument(this.url);
-        console.log("RENDERING PDF");
       this.pdf = pdf;
     },
 
-    zoomIn(inc) {
+    zoomIn() {
       this.clearProgress();
-      this.scale += inc;
+      this.scale += this.scaleChangeAmount;
       this.userScale = Math.floor(this.scale * 100);
     },
 
-    zoomOut(dec) {
+    zoomOut() {
       this.clearProgress();
-      this.scale -= dec;
+      this.scale -= this.scaleChangeAmount;
       this.userScale = Math.floor(this.scale * 100);
     },
 
@@ -103,20 +92,17 @@ export default {
     close() {
       this.clearProgress();
       this.scale = 1;
-      EventBus.$emit('closePdfModal');
+      EventBus.$emit('CLOSE_PDF_MODAL');
     },
   },
 
   mounted() {
-    this.scale = 1
-
     let that = this; //I hate doing this so much is there a better way?
     EventBus.$on('LOAD_PDF', function(file) {
       that.url = file;
-        console.log(`FETCHING URL: ${that.url}`);
       that.fetchPDF();
     });
-
+    //When a page is rendered increase the loading bar
     EventBus.$on('PAGE_RENDERED', function(page) {
       that.progressArray.push(page);
       that.loadingProgress = that.progressArray.length * that.loadingEndPointScale;
@@ -134,7 +120,6 @@ export default {
             let loadingEndPoint = pages.length
             this.loadingEndPointScale = 100 / loadingEndPoint;
           });
-          // then(() => console.log(this.pages))
       }
     },
   },
@@ -145,6 +130,20 @@ export default {
   .pdf-wrapper{
     position: absolute;
     top: 42px;
+  }
+  .pdf-document {
+    position: fixed;
+    overflow: scroll;
+    width: 100%;
+    height: 100%;
+  }
+
+  .nav-cover{
+    background-color: #012a15;
+    top: 0;
+    width: 100vw;
+    height: 42px;
+    z-index: 8999;
   }
   .fa {
     position: absolute;
@@ -165,24 +164,13 @@ export default {
     left: 85px;
     transform:scale(1.6, 1.6);
   }
-  .pdf-document {
-    position: fixed;
-    overflow: scroll;
-    width: 100%;
-    height: 100%;
-  }
-  .nav-cover{
-    background-color: #012a15;
-    top: 0;
-    width: 100vw;
-    height: 42px;
-    z-index: 8999;
-  }
+
   .loadingBar {
     position: relative;
     z-index: 8999;
     margin-top: -3px;
   }
+
   .modal-backdrop {
     position: fixed;
     top: 0;
@@ -196,18 +184,6 @@ export default {
     background: #FFFFFF;
     box-shadow: 0px 0px 20px 1px #282828;
     overflow-x: auto;
-  }
-  .modal-footer {
-    padding: 15px;
-  }
-  .modal-footer {
-    border-top: 1px solid #eeeeee;
-  }
-  .btn-green {
-    color: white;
-    background: #4AAE9B;
-    border: 1px solid #4AAE9B;
-    border-radius: 2px;
   }
 
 /* Transitions */

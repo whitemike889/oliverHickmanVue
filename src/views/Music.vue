@@ -1,21 +1,15 @@
 <template>
-  <div>
+  <div id="music">
     <div class="imgContainer1">
       <img class="img" src="@/assets/img/Oliver+Kiersten-169.jpg" alt="noImg">
     </div>
     <div class="content">
       <h1> MUSIC </h1>
-      <pdf-modal
-        v-show="modalIsShowing"
-      />
-      <div
-        class="pieceWrapper"
+      <pdf-modal v-show="modalIsShowing" />
+      <div class="pieceWrapper"
         v-for='(piece,index) in $options.musicData'
       >
-        <cover-viewer
-          class="cover"
-          :index="index"
-        />
+        <cover-viewer class="cover" :index="index"/>
         <audio-player class="audioPlayer"
           :index="index"
           :title="piece.title"
@@ -24,8 +18,8 @@
           :audio="piece.audio"
           :mvmts="validateMovements(piece.movements)"
         />
-      </div>
-    </div>
+      </div> <!-- end pieceWrapper -->
+    </div> <!-- end content -->
   </div>
 </template>
 
@@ -36,7 +30,6 @@ import pdfModal from '@/components/pdf/pdf-modal.vue';
 import musicData from '@/musicData.json';
 import EventBus from '../eventBus.js';
 
-// const publicPath = process.env.BASE_URL;
 
 export default {
   components: {
@@ -44,41 +37,44 @@ export default {
     coverViewer,
     pdfModal
   },
+
   musicData: musicData,
+
   data: function() {
     return {
-      pdfData: [], //this is populated beforeMount
+      pdfFile: [], //this is populated beforeMount
       modalIsShowing: false,
-      pdfForModal: undefined
     }
   },
+
   methods: {
     validateMovements: function (piece) {
       //return the movements if exist or false
       return (typeof piece !== 'undefined' ? piece : false);
     },
+
     togglePdfModal: function() {
         this.modalIsShowing = !this.modalIsShowing;
     }
   },
 
   mounted() {
-    EventBus.$on('openPdfModal', (clickIndex) => {
+    //open the modal first, then emit the load pdf event with requested file
+    EventBus.$on('OPEN_PDF_MODAL', (clickIndex) => {
       this.togglePdfModal();
-      this.pdfForModal = this.pdfData[clickIndex]['file'];
-      EventBus.$emit('LOAD_PDF', this.pdfData[clickIndex]['file'])
+      EventBus.$emit('LOAD_PDF', this.pdfFile[clickIndex])
       });
-    EventBus.$on('closePdfModal', () => {
+    //close the modal
+    EventBus.$on('CLOSE_PDF_MODAL', () => {
       this.togglePdfModal();
     });
   },
+
   beforeMount() {
     //make an array of data that the PDF modal will use
     let that = this;
-    musicData.forEach(function(music, index) {
-      that.pdfData[index] = {
-        file: music.pdf,
-      };
+    musicData.forEach( (music, index) => {
+      that.pdfFile[index] = music.pdf;
     });
   }
 }

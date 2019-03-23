@@ -38,7 +38,7 @@ export default {
   },
   methods: {
     openPdfModal: function() {
-      EventBus.$emit('openPdfModal', this.index);
+      EventBus.$emit('OPEN_PDF_MODAL', this.index);
     }
   }
 }

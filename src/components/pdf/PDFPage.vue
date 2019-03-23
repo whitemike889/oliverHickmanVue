@@ -48,7 +48,7 @@ export default {
         this.renderTask = await this.page.render(this.getRenderContext());
         EventBus.$emit("PAGE_RENDERED", this.pageNumber);
       } catch(error) {
-        console.log("ERROR CAUGHT", error);
+        console.log("ERROR CAUGHT. Something funny happened on render");
       }
     },
 
@@ -74,9 +74,6 @@ export default {
     page(page, oldPage) {
       this.destroyPage(oldPage);
     },
-    // scale() {
-    //   this.destroyPage(this.page);
-    // }
   },
 
   created() {
