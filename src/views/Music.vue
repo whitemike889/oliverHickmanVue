@@ -1,19 +1,15 @@
 <template>
-  <div>
+  <div id="music">
     <div class="imgContainer1">
       <img class="img" src="@/assets/img/Oliver+Kiersten-169.jpg" alt="noImg">
     </div>
     <div class="content">
       <h1> MUSIC </h1>
-      <div class="pieceWrapper" v-for='(piece,index) in $options.musicData'>
-        <cover-viewer
-          class="cover"
-          v-on:open="loadPdfInModal"
-        />
-        <pdf-modal
-          v-show="isPdfModalVisible"
-          v-on:close="closePdfModal"
-        />
+      <pdf-modal v-show="modalIsShowing" />
+      <div class="pieceWrapper"
+        v-for='(piece,index) in $options.musicData'
+      >
+        <cover-viewer class="cover" :index="index"/>
         <audio-player class="audioPlayer"
           :index="index"
           :title="piece.title"
@@ -22,17 +18,18 @@
           :audio="piece.audio"
           :mvmts="validateMovements(piece.movements)"
         />
-      </div>
-    </div>
+      </div> <!-- end pieceWrapper -->
+    </div> <!-- end content -->
   </div>
 </template>
 
 <script>
 import AudioPlayer from '@/components/audioPlayer.vue';
 import coverViewer from '@/components/coverViewer.vue';
-import pdfModal from '@/components/pdf-modal.vue';
-import EventBus from '../eventBus.js';
+import pdfModal from '@/components/pdf/pdf-modal.vue';
 import musicData from '@/musicData.json';
+import EventBus from '../eventBus.js';
+
 
 // const publicPath = process.env.BASE_URL;
 
@@ -42,30 +39,45 @@ export default {
     coverViewer,
     pdfModal
   },
+
   musicData: musicData,
+
   data: function() {
     return {
-      isPdfModalVisible: false,
+      pdfFile: [], //this is populated beforeMount
+      modalIsShowing: false,
     }
   },
+
   methods: {
     validateMovements: function (piece) {
       //return the movements if exist or false
       return (typeof piece !== 'undefined' ? piece : false);
     },
-    loadPdfInModal: function() {
-      // this.isPdfModalVisible = true
-      EventBus.$emit('loadPdf');
-    },
-    closePdfModal: function() {
-      this.isPdfModalVisible = false
+
+    togglePdfModal: function() {
+        this.modalIsShowing = !this.modalIsShowing;
     }
   },
+
   mounted() {
-    let self = this;
-    EventBus.$on('openPdfModal', function() {
-      self.isPdfModalVisible = true;
-    })
+    //open the modal first, then emit the load pdf event with requested file
+    EventBus.$on('OPEN_PDF_MODAL', (clickIndex) => {
+      this.togglePdfModal();
+      EventBus.$emit('LOAD_PDF', this.pdfFile[clickIndex])
+      });
+    //close the modal
+    EventBus.$on('CLOSE_PDF_MODAL', () => {
+      this.togglePdfModal();
+    });
+  },
+
+  beforeMount() {
+    //make an array of data that the PDF modal will use
+    let that = this;
+    musicData.forEach( (music, index) => {
+      that.pdfFile[index] = music.pdf;
+    });
   }
 }
 </script>
@@ -92,6 +104,7 @@ export default {
   grid-template-rows: 200px;
   grid-template-columns: [cover] 155px [player] auto;
   grid-column-gap: 5px;
+  padding-bottom: 30px;
 }
 
 .cover {
