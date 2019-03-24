@@ -6,19 +6,35 @@ Vue.use(Vuex);
 
 export default new Vuex.Store({
   state: {
-    playbackPercent: 0,
+    musicPlayerData: [],
   },
   mutations: {
-    mutatePlaybackPercent(state, percent) {
-      state.playbackPercent = percent;
+    mutatePlaybackPercent(state, payload) {
+      let index = payload.index;
+      let percent = payload.percent;
+      state.musicPlayerData[index] = percent;
+    },
+    mutateRegisterPlayer(state, playerIndex) {
+      state.musicPlayerData[playerIndex] = 0;
+    },
+    mutateTest(state) {
+      state.test++
     }
   },
   actions: {
-    updatePlaybackPercent(context, percent) {
-      context.commit('mutatePlaybackPercent', percent);
+    updatePlaybackPercent(context, payload) {
+      context.commit('mutatePlaybackPercent', payload);
+    },
+    registerPlayer(context, playerIndex) {
+      context.commit('mutateRegisterPlayer', playerIndex);
+    },
+    inc(context) {
+      context.commit('mutateTest');
     }
   },
   getters: {
-    
+    getPlaybackProgress: (state) => (index) => {
+      return state.musicPlayerData[index];
+    }
   }
 })

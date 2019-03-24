@@ -7,7 +7,7 @@
     />
     <img :src="`${publicPath}waveforms/${waveform}`" class="waveform" />
     <div class='songProgress'>
-      <div class='songProgressBar' v-bind:style="{ width:`${this.playbackPercent}%` }"></div>
+      <div class='songProgressBar' v-bind:style="{ width:`${progress}%` }"></div>
     </div>
     <div class='player'>
       <vue-plyr ref="plyr">
@@ -38,18 +38,24 @@ export default {
   },
   data: function() {
     return {
-      publicPath: process.env.BASE_URL
+      publicPath: process.env.BASE_URL,
+      progress: 0
     }
   },
   props: ['index', 'title', 'details', 'waveform', 'audio', 'mvmts'],
 
   methods: {
-    ...mapActions(['updatePlaybackPercent']),
+    ...mapActions(['updatePlaybackPercent', 'registerPlayer']),
+
     //this updates the bar as it progresses
     updatePlaybackBar: function() {
       let percent = (this.player.currentTime / this.duration) * 100;
-      this.updatePlaybackPercent(percent);
+      this.updatePlaybackPercent({ percent: percent, index: this.index });
+      //It seems a bit silly to write the playback percent and then immediately read it?
+      //mapGetter's doesn't seem to work if I'm passing an index. So we have to go this route.
+      this.progress = this.$store.getters.getPlaybackProgress(this.index);
     },
+
    },
   mounted () {
     //this binds the event listener on mount
@@ -61,14 +67,24 @@ export default {
       this.player.currentTime = timecode;
     });
 
+    this.registerPlayer(this.index);
   },
+
   computed: {
     //define the player object. Can now be accessed through this.player
     player () { return this.$refs.plyr.player },
     //returns the duration of the track
     duration () { return this.$refs.plyr.player.duration },
 
-    ...mapState(['playbackPercent'])
+    ...mapState([ 'musicPlayerData' ]),
+    musicPlaterData: {
+      get() {
+        return this.$store.state.musicPlayerData;
+      },
+      set(value) {
+        this.$store.commit('mutateRegisterPlayer', value);
+      }
+    }
   }
 }
 </script>
@@ -130,7 +146,7 @@ h2.musicTitle {
   z-index: 2;
 }
 .songProgressBar {
-  width: 20%; /* This will be overwritten immediately */
+  width: 0%; /* This will be overwritten immediately */
   height: 100%;
   background-color: #034121;
   opacity: 0.18;
