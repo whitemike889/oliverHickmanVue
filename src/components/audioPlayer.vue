@@ -51,11 +51,7 @@ export default {
     updatePlaybackBar: function() {
       let percent = (this.player.currentTime / this.duration) * 100;
       this.updatePlaybackPercent({ percent: percent, index: this.index });
-      //It seems a bit silly to write the playback percent and then immediately read it?
-      //mapGetter's doesn't seem to work if I'm passing an index. So we have to go this route.
-      this.progress = this.$store.getters.getPlaybackProgress(this.index);
     },
-
    },
   mounted () {
     //this binds the event listener on mount
@@ -68,6 +64,20 @@ export default {
     });
 
     this.registerPlayer(this.index);
+
+    //watch the store for changes
+    let that = this;
+    this.$store.subscribe((mutate) => {
+      let payload = mutate.payload;
+      switch(mutate.type) {
+        //if the playbackPercent changes, make sure the index matches and update progress bar
+        case 'mutatePlaybackPercent':
+          if (payload.index == that.index) {
+            that.progress = payload.percent
+          }
+          break;
+      }
+    });
   },
 
   computed: {
