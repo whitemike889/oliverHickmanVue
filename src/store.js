@@ -2,23 +2,27 @@ import Vue from 'vue';
 import Vuex from 'vuex';
 Vue.use(Vuex);
 
-
-
 export default new Vuex.Store({
   state: {
     musicPlayerData: [],
   },
   mutations: {
+    mutateRegisterPlayer(state, playerIndex) {
+      let data = {
+        percent: 0,
+        status: 0
+      }
+      state.musicPlayerData[playerIndex] = data;
+    },
     mutatePlaybackPercent(state, payload) {
       let index = payload.index;
       let percent = payload.percent;
-      state.musicPlayerData[index] = percent;
+      state.musicPlayerData[index].percent = percent;
     },
-    mutateRegisterPlayer(state, playerIndex) {
-      state.musicPlayerData[playerIndex] = 0;
-    },
-    mutateTest(state) {
-      state.test++
+    mutatePlayerStatus(state, payload) {
+      let index = payload.index;
+      let status = payload.status;
+      state.musicPlayerData[index].status = status;
     }
   },
   actions: {
@@ -28,8 +32,8 @@ export default new Vuex.Store({
     registerPlayer(context, playerIndex) {
       context.commit('mutateRegisterPlayer', playerIndex);
     },
-    inc(context) {
-      context.commit('mutateTest');
+    updatePlayerStatus(context, payload) {
+      context.commit('mutatePlayerStatus', payload);
     }
   },
   getters: {

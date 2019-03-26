@@ -45,17 +45,26 @@ export default {
   props: ['index', 'title', 'details', 'waveform', 'audio', 'mvmts'],
 
   methods: {
-    ...mapActions(['updatePlaybackPercent', 'registerPlayer']),
+    ...mapActions(['updatePlaybackPercent', 'registerPlayer', 'updatePlayerStatus']),
 
     //this updates the bar as it progresses
     updatePlaybackBar: function() {
       let percent = (this.player.currentTime / this.duration) * 100;
       this.updatePlaybackPercent({ percent: percent, index: this.index });
     },
+    updateStatusStore: function(status) {
+      this.updatePlayerStatus({ status: status, index: this.index })
+    }
    },
   mounted () {
+    //watch the store for changes
+    this.registerPlayer(this.index);
+
     //this binds the event listener on mount
     this.player.on('timeupdate', this.updatePlaybackBar);
+    this.player.on('play', () => this.updateStatusStore(true));
+    this.player.on('pause', () => this.updateStatusStore(false));
+
     //listens on the EventBus for a new timecode from movementsBox. Updates current time
     //I'm using the EventBus instead of a custom event because I need to send a dynamic event handler.
     //Can't figure out an elgant solution to this with events.
@@ -63,9 +72,7 @@ export default {
       this.player.currentTime = timecode;
     });
 
-    this.registerPlayer(this.index);
-
-    //watch the store for changes
+    //listen for mutate calls and updates them when necessary.
     let that = this;
     this.$store.subscribe((mutate) => {
       let payload = mutate.payload;
@@ -75,7 +82,16 @@ export default {
           if (payload.index == that.index) {
             that.progress = payload.percent
           }
-          break;
+        break;
+        case 'mutatePlayerStatus':
+          if (payload.index == that.index) {
+            // TODO: Figure out how to control the stats from two seperate points. May not need to do it here.
+            // if(that.player.playing != playload.status) {
+            //   that.player.togglePlay();
+            // }
+            console.log("PlayerStatus: ", payload.index, payload.status);
+          }
+        break;
       }
     });
   },
@@ -87,14 +103,6 @@ export default {
     duration () { return this.$refs.plyr.player.duration },
 
     ...mapState([ 'musicPlayerData' ]),
-    musicPlaterData: {
-      get() {
-        return this.$store.state.musicPlayerData;
-      },
-      set(value) {
-        this.$store.commit('mutateRegisterPlayer', value);
-      }
-    }
   }
 }
 </script>
