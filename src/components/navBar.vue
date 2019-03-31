@@ -24,7 +24,7 @@
   position: fixed;
   top: 0;
   width: 100vw;
-  z-index: 10;
+  z-index: 30;
 }
 .home-nav {
   grid-row: 1;
