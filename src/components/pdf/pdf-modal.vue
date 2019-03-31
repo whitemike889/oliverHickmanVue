@@ -3,6 +3,9 @@
     <div class="modal-backdrop">
       <div class="modal">
         <div class="nav-cover">
+
+            <modal-player></modal-player>
+
           <progress-bar
             class="loadingBar"
             :val="loadingProgress"
@@ -33,7 +36,8 @@
 //stuff for pdf modal
 import PDFPage from './PDFPage';
 import range from 'lodash/range';
-import ProgressBar from 'vue-simple-progress'
+import ProgressBar from 'vue-simple-progress';
+import ModalPlayer from '@/components/ModalPlayer.vue';
 
 import EventBus from '../../eventBus.js';
 
@@ -62,7 +66,8 @@ export default {
   components: {
     PDFPage,
     'font-awesome': FontAwesomeIcon,
-    ProgressBar
+    ProgressBar,
+    ModalPlayer
   },
 
   methods: {
@@ -167,8 +172,8 @@ export default {
 
   .loadingBar {
     position: relative;
+    top: 39px;
     z-index: 9000;
-    padding-top: 39px;
   }
 
   .modal-backdrop {
