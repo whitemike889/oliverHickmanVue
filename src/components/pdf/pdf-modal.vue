@@ -167,8 +167,8 @@ export default {
 
   .loadingBar {
     position: relative;
-    z-index: 8999;
-    margin-top: -3px;
+    z-index: 9000;
+    padding-top: 39px;
   }
 
   .modal-backdrop {
