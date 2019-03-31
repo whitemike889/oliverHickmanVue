@@ -3,7 +3,7 @@
     <div class="playbackPosition">
       <vue-slider v-model="value" :tooltip-placement="'bottom'"></vue-slider>
     </div>
-    <div class="playbackTime"> 0:00 </div>
+    <div class="playbackTime"> {{ convertToDuration(duration) }} </div>
 
     </div>
   </div>
@@ -22,8 +22,30 @@
       return {
         value: 10
       }
+    },
+    props: ['clickIndex', 'duration'],
+    methods: {
+      convertToDuration: function(time) {
+        return convertTimeToString(time);
+      }
     }
   }
+
+//https://stackoverflow.com/questions/3733227/javascript-seconds-to-minutes-and-seconds
+function convertTimeToString(time) {
+  // Hours, minutes and seconds
+  var hrs = ~~(time / 3600);
+  var mins = ~~((time % 3600) / 60);
+  var secs = ~~time % 60;
+  // Output like "1:01" or "4:03:59" or "123:03:59"
+  var ret = "";
+  if (hrs > 0) {
+    ret += "" + hrs + ":" + (mins < 10 ? "0" : "");
+  }
+  ret += "" + mins + ":" + (secs < 10 ? "0" : "");
+  ret += "" + secs;
+  return ret;
+}
 </script>
 
 <style>

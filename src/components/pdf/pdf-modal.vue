@@ -3,9 +3,7 @@
     <div class="modal-backdrop">
       <div class="modal">
         <div class="nav-cover">
-
-            <modal-player></modal-player>
-
+          <modal-player :clickIndex="clickIndex" :duration="duration"></modal-player>
           <progress-bar
             class="loadingBar"
             :val="loadingProgress"
@@ -39,6 +37,7 @@ import range from 'lodash/range';
 import ProgressBar from 'vue-simple-progress';
 import ModalPlayer from '@/components/ModalPlayer.vue';
 
+import { mapState, mapActions, mapGetters } from 'vuex';
 import EventBus from '../../eventBus.js';
 
 // stuff for font awesome
@@ -60,6 +59,7 @@ export default {
       progressArray: [],
       loadingProgress: 0,
       loadingEndPointScale: 0,
+      duration: undefined
     }
   },
 
@@ -69,6 +69,8 @@ export default {
     ProgressBar,
     ModalPlayer
   },
+
+  props: ['clickIndex'],
 
   methods: {
     async fetchPDF() {
@@ -103,10 +105,12 @@ export default {
 
   mounted() {
     let that = this; //I hate doing this so much is there a better way?
-    EventBus.$on('LOAD_PDF', function(file) {
+    EventBus.$on('LOAD_PDF', function(file, clickIndex) {
       that.url = file;
+      that.duration = that.$store.getters.getRequestedDuration(clickIndex)
       that.fetchPDF();
     });
+    
     //When a page is rendered increase the loading bar
     EventBus.$on('PAGE_RENDERED', function(page) {
       that.progressArray.push(page);

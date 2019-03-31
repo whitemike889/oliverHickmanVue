@@ -5,7 +5,7 @@
     </div>
     <div class="content">
       <h1> MUSIC </h1>
-      <pdf-modal v-show="modalIsShowing" />
+      <pdf-modal v-show="modalIsShowing" :clickIndex="clickIndex"/>
       <div class="pieceWrapper"
         v-for='(piece,index) in $options.musicData'
       >
@@ -32,6 +32,7 @@ import pdfModal from '@/components/pdf/pdf-modal.vue';
 //data
 import musicData from '@/musicData.json';
 import EventBus from '../eventBus.js';
+import { mapState, mapActions, mapGetters } from 'vuex';
 
 export default {
   components: {
@@ -46,6 +47,7 @@ export default {
     return {
       pdfFile: [], //this is populated beforeMount
       modalIsShowing: false,
+      clickIndex: undefined
     }
   },
 
@@ -56,15 +58,18 @@ export default {
     },
 
     togglePdfModal: function() {
-        this.modalIsShowing = !this.modalIsShowing;
+      this.modalIsShowing = !this.modalIsShowing;
     },
+
   },
 
   mounted() {
     //open the modal first, then emit the load pdf event with requested file
     EventBus.$on('OPEN_PDF_MODAL', (clickIndex) => {
       this.togglePdfModal();
-      EventBus.$emit('LOAD_PDF', this.pdfFile[clickIndex])
+      this.clickIndex = clickIndex;
+      EventBus.$emit(`getDuration_${clickIndex}`);
+      EventBus.$emit('LOAD_PDF', this.pdfFile[clickIndex], clickIndex);
       });
     //close the modal
     EventBus.$on('CLOSE_PDF_MODAL', () => {

@@ -45,7 +45,7 @@ export default {
   props: ['index', 'title', 'details', 'waveform', 'audio', 'mvmts'],
 
   methods: {
-    ...mapActions(['updatePlaybackPercent', 'registerPlayer', 'updatePlayerStatus']),
+    ...mapActions(['updatePlaybackPercent', 'registerPlayer', 'updatePlayerStatus', 'updateDuration']),
 
     //this updates the bar as it progresses
     updatePlaybackBar: function() {
@@ -54,12 +54,11 @@ export default {
     },
     updateStatusStore: function(status) {
       this.updatePlayerStatus({ status: status, index: this.index })
-    }
+    },
    },
   mounted () {
     //watch the store for changes
-    this.registerPlayer(this.index);
-
+    this.registerPlayer({index: this.index, duration: this.player.duration});
     //this binds the event listener on mount
     this.player.on('timeupdate', this.updatePlaybackBar);
     this.player.on('play', () => this.updateStatusStore(true));
@@ -70,6 +69,10 @@ export default {
     //Can't figure out an elgant solution to this with events.
     EventBus.$on(`newTimecode_${this.index}`, timecode => {
       this.player.currentTime = timecode;
+    });
+    //For some reason, the duration is 0 when I register the players, so we need to get it on demand
+    EventBus.$on(`getDuration_${this.index}`, () => {
+      this.updateDuration({index: this.index, duration: this.duration});
     });
 
     //listen for mutate calls and updates them when necessary.
