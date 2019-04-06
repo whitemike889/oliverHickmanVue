@@ -58,7 +58,7 @@ export default {
       progressArray: [],
       loadingProgress: 0,
       loadingEndPointScale: 0,
-      duration: 120
+      duration: 420
     }
   },
 

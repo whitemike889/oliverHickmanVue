@@ -3,7 +3,7 @@
     <div class="playbackPosition">
       <vue-slider v-model="playbackPercent" :tooltip-placement="'bottom'"></vue-slider>
     </div>
-    <div class="playbackTime"> {{ convertToDuration(duration) }} </div>
+    <div class="playbackTime"> {{ playbackTime }} </div>
 
     </div>
   </div>
@@ -21,16 +21,30 @@
     },
     data: function () {
       return {
-        value: 10,
-        // playbackPercent: this.$store.state.musicPlayerData[this.clickIndex].percent
+        value: 0,
+        playbackPercent: 0,
+        playbackTime: this.duration
       }
     },
     props: ['duration'],
     methods: {
       convertToDuration: function(time) {
         return convertTimeToString(time);
+      },
+      calculateDurationRemaining(progress) {
+        let progressMul = progress / 100;
+        let newDurationSec = this.duration - (this.duration * progressMul);
+        let newDuration = convertTimeToString(newDurationSec);
+        this.playbackTime = newDuration;
       }
     },
+    mounted() {
+      let that = this;
+      EventBus.$on("NEW_PROGRESS_PERCENT", (value) => {
+        that.playbackPercent = value;
+        this.calculateDurationRemaining(value);
+      });
+    }
   }
 
   //https://stackoverflow.com/questions/3733227/javascript-seconds-to-minutes-and-seconds

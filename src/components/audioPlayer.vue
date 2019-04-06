@@ -7,7 +7,7 @@
     />
     <img :src="`${publicPath}waveforms/${waveform}`" class="waveform" />
     <div class='songProgress'>
-      <div class='songProgressBar' v-bind:style="{ width:playbackPercent }"></div>
+      <div class='songProgressBar' v-bind:style="{ width:`${playbackPercent}%` }"></div>
     </div>
     <div class='player'>
       <vue-plyr ref="plyr">
@@ -35,7 +35,7 @@ export default {
   },
   data: function() {
     return {
-      playbackPercent: '0%',
+      playbackPercent: 0,
       publicPath: process.env.BASE_URL
     }
   },
@@ -45,8 +45,7 @@ export default {
     //this updates the bar as it progresses
     updatePlaybackBar: function() {
       let percent = (this.player.currentTime / this.duration) * 100;
-      let percentString = `${percent.toString()}%`
-      this.playbackPercent = percentString;
+      this.playbackPercent = percent;
     },
    },
   mounted () {
@@ -64,6 +63,11 @@ export default {
     player () { return this.$refs.plyr.player },
     //returns the duration of the track
     duration () { return this.$refs.plyr.player.duration }
+  },
+  watch: {
+    playbackPercent(value) {
+      EventBus.$emit('NEW_PROGRESS_PERCENT', value);
+    }
   }
 }
 </script>
