@@ -1,7 +1,7 @@
 <template>
   <div class="playbackWrapper">
     <div class="playbackPosition">
-      <vue-slider v-model="value" :tooltip-placement="'bottom'"></vue-slider>
+      <vue-slider v-model="playbackPercent" :tooltip-placement="'bottom'"></vue-slider>
     </div>
     <div class="playbackTime"> {{ convertToDuration(duration) }} </div>
 
@@ -12,6 +12,7 @@
 <script>
   import VueSlider from 'vue-slider-component';
   import 'vue-slider-component/theme/default.css';
+  import EventBus from '../eventBus.js';
 
   export default {
     name: 'modal-player',
@@ -20,13 +21,20 @@
     },
     data: function () {
       return {
-        value: 10
+        value: 10,
+        playbackPercent: this.$store.state.musicPlayerData[this.clickIndex].percent
       }
     },
     props: ['clickIndex', 'duration'],
     methods: {
       convertToDuration: function(time) {
         return convertTimeToString(time);
+      }
+    },
+    watch: {
+      clickIndex: function() {
+        this.playbackPercent = this.$store.state.musicPlayerData[this.clickIndex].percent;
+        console.log(this.playbackPercent);
       }
     }
   }

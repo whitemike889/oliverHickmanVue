@@ -48,8 +48,7 @@ export default new Vuex.Store({
   },
   getters: {
     getRequestedDuration: (state) => (index) => {
-      // console.log(state.musicPlayerData[index]);
       return state.musicPlayerData[index].duration;
-    }
+    },
   }
 })
