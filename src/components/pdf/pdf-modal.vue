@@ -3,6 +3,7 @@
     <div class="modal-backdrop">
       <div class="modal">
         <div class="nav-cover">
+          <remote-player :duration="duration"></remote-player>
           <progress-bar
             class="loadingBar"
             :val="loadingProgress"
@@ -34,8 +35,9 @@
 import PDFPage from './PDFPage';
 import range from 'lodash/range';
 import ProgressBar from 'vue-simple-progress'
+import RemotePlayer from '@/components/RemotePlayer.vue'
 
-import EventBus from '../../eventBus.js';
+import EventBus from '@/eventBus.js';
 
 // stuff for font awesome
 import { library } from '@fortawesome/fontawesome-svg-core'
@@ -56,13 +58,15 @@ export default {
       progressArray: [],
       loadingProgress: 0,
       loadingEndPointScale: 0,
+      duration: 120
     }
   },
 
   components: {
     PDFPage,
     'font-awesome': FontAwesomeIcon,
-    ProgressBar
+    ProgressBar,
+    RemotePlayer
   },
 
   methods: {
@@ -168,7 +172,7 @@ export default {
   .loadingBar {
     position: relative;
     z-index: 8999;
-    margin-top: -3px;
+    padding-top: 39px;
   }
 
   .modal-backdrop {
