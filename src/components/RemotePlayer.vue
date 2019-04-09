@@ -1,11 +1,14 @@
 <template>
   <div class="playbackWrapper">
+    <div class="playbackControls">
+      <font-awesome v-show="!playStatus" icon="play" class="fa" @click="togglePlayStatus"/>
+      <font-awesome v-show="playStatus" icon="pause" class="fa" @click="togglePlayStatus"/>
+    </div>
     <div class="playbackPosition">
       <vue-slider v-model="playbackPercent" :tooltip-placement="'bottom'"></vue-slider>
     </div>
     <div class="playbackTime"> {{ playbackTime }} </div>
 
-    </div>
   </div>
 </template>
 
@@ -14,16 +17,25 @@
   import 'vue-slider-component/theme/default.css';
   import EventBus from '../eventBus.js';
 
+  import { library } from '@fortawesome/fontawesome-svg-core'
+  import { faPlay, faPause } from '@fortawesome/free-solid-svg-icons';
+  import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
+  library.add(faPlay, faPause);
+
   export default {
     name: 'remote-player',
     components: {
-      VueSlider
+      VueSlider,
+      'font-awesome': FontAwesomeIcon,
     },
     data: function () {
       return {
-        value: 0,
         playbackPercent: 0,
-        playbackTime: this.duration
+        playbackTime: this.duration,
+        playIndex: 0,
+        pdfIndex: 0,
+        pdf: 0,
+        playStatus: false
       }
     },
     props: ['duration'],
@@ -34,15 +46,29 @@
       calculateDurationRemaining(progress) {
         let progressMul = progress / 100;
         let newDurationSec = this.duration - (this.duration * progressMul);
-        let newDuration = convertTimeToString(newDurationSec);
-        this.playbackTime = newDuration;
+        return convertTimeToString(newDurationSec);
+      },
+      togglePlayStatus() {
+        if (this.playStatus) {
+          EventBus.$emit(`PAUSE_PLAYER_${this.pdfIndex}`);
+        } else {
+          EventBus.$emit(`START_PLAYER_${this.pdfIndex}`);
+        }
+        this.playStatus = !this.playStatus;
       }
     },
     mounted() {
       let that = this;
-      EventBus.$on("NEW_PROGRESS_PERCENT", (value) => {
-        that.playbackPercent = value;
-        this.calculateDurationRemaining(value);
+      EventBus.$on("NEW_PROGRESS_PERCENT", (newPercent) => {
+        that.playbackPercent = newPercent;
+        that.playbackTime = this.calculateDurationRemaining(newPercent);
+      });
+      EventBus.$on('OPEN_PDF_MODAL', (index) => {
+        that.pdfIndex = index
+      });
+      EventBus.$on("PLAYER_STATUS_CHANGE", (payload) => {
+        that.playIndex = payload.index;
+        that.playStatus = payload.playerIsPlaying;
       });
     }
   }
@@ -69,7 +95,7 @@
   height: 42px;
   width: 50%;
   display: grid;
-  grid-template-columns: [play] auto [progressBar] 75% [progressText] auto;
+  grid-template-columns: [play] 1fr [progressBar] 75% [progressText] 1fr;
   align-items: center;
   position: absolute;
   z-index: 9002;
@@ -81,13 +107,20 @@
 .playbackPosition {
   grid-column: progressBar;
   justify-content: center;
+  padding-left: 7px;
 }
 .playbackTime {
   grid-column: progressText;
   font-family: "Nunito Sans", sans-serif;
   color: #fff;
 }
-
+.playbackControls {
+  grid-column: play;
+  justify-self: center;
+}
+.playbackControls .fa {
+  transform: scale(1.1, 1.1);
+}
 .vue-slider-rail {
   background-color: #747777;
   border-radius: 15px;

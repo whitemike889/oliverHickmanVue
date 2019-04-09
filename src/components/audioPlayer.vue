@@ -36,7 +36,8 @@ export default {
   data: function() {
     return {
       playbackPercent: 0,
-      publicPath: process.env.BASE_URL
+      publicPath: process.env.BASE_URL,
+      playerIsPlaying: false
     }
   },
   props: ['index', 'title', 'details', 'waveform', 'audio', 'mvmts'],
@@ -47,15 +48,27 @@ export default {
       let percent = (this.player.currentTime / this.duration) * 100;
       this.playbackPercent = percent;
     },
+    playerStatusChange: function() {
+      this.playerIsPlaying = !this.playerIsPlaying;
+      EventBus.$emit('PLAYER_STATUS_CHANGE', {playerIsPlaying: this.playerIsPlaying, index: this.index});
+    },
    },
   mounted () {
     //this binds the event listener on mount
     this.player.on('timeupdate', this.updatePlaybackBar);
+    this.player.on('playing', this.playerStatusChange);
+    this.player.on('pause', this.playerStatusChange);
     //listens on the EventBus for a new timecode from movementsBox. Updates current time
     //I'm using the EventBus instead of a custom event because I need to send a dynamic event handler.
     //Can't figure out an elgant solution to this with events.
     EventBus.$on(`newTimecode_${this.index}`, timecode => {
       this.player.currentTime = timecode;
+    });
+    EventBus.$on(`START_PLAYER_${this.index}`, () => {
+      this.player.play();
+    });
+    EventBus.$on(`PAUSE_PLAYER_${this.index}`, () => {
+      this.player.pause();
     });
   },
   computed: {
