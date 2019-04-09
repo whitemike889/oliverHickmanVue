@@ -70,6 +70,13 @@ export default {
     EventBus.$on(`PAUSE_PLAYER_${this.index}`, () => {
       this.player.pause();
     });
+    let that = this;
+    EventBus.$on(`PLAYER_PROGRESS_UPDATE_${this.index}`, (update) => {
+      let updateMul = update / 100;
+      let currentTime = this.duration * updateMul;
+      // console.log(this.duration);
+      this.player.currentTime = currentTime;
+    });
   },
   computed: {
     //define the player object. Can now be accessed through this.player

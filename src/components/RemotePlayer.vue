@@ -5,7 +5,13 @@
       <font-awesome v-show="playStatus" icon="pause" class="fa" @click="togglePlayStatus"/>
     </div>
     <div class="playbackPosition">
-      <vue-slider v-model="playbackPercent" :tooltip-placement="'bottom'"></vue-slider>
+      <vue-slider
+        v-model="playbackPercent"
+        :tooltip-placement="'bottom'"
+        :contained="true"
+        @dragging="updatePlaybackPercent"
+        @drag-end="playStatusUpdateDraggingEnd">
+      </vue-slider>
     </div>
     <div class="playbackTime"> {{ playbackTime }} </div>
 
@@ -35,7 +41,8 @@
         playIndex: 0,
         pdfIndex: 0,
         pdf: 0,
-        playStatus: false
+        playStatus: false,
+        wasPlaying: false
       }
     },
     props: ['duration'],
@@ -55,9 +62,26 @@
           EventBus.$emit(`START_PLAYER_${this.pdfIndex}`);
         }
         this.playStatus = !this.playStatus;
+      },
+      updatePlaybackPercent(value) {
+        //if things are playing we need to pause them and set a playback reminder
+        if(this.playStatus) {
+          this.wasPlaying = true;
+          this.playStatus = false;
+          EventBus.$emit(`PAUSE_PLAYER_${this.pdfIndex}`);
+        }
+        EventBus.$emit(`PLAYER_PROGRESS_UPDATE_${this.playIndex}`, this.playbackPercent);
+      },
+      playStatusUpdateDraggingEnd() {
+        //if we were playing before drag we need to play again.
+        if(this.wasPlaying) {
+          this.playStatus = true;
+          EventBus.$emit(`START_PLAYER_${this.pdfIndex}`);
+        }
       }
     },
     mounted() {
+
       let that = this;
       EventBus.$on("NEW_PROGRESS_PERCENT", (newPercent) => {
         that.playbackPercent = newPercent;
@@ -70,7 +94,7 @@
         that.playIndex = payload.index;
         that.playStatus = payload.playerIsPlaying;
       });
-    }
+    },
   }
 
   //https://stackoverflow.com/questions/3733227/javascript-seconds-to-minutes-and-seconds
@@ -107,7 +131,6 @@
 .playbackPosition {
   grid-column: progressBar;
   justify-content: center;
-  padding-left: 7px;
 }
 .playbackTime {
   grid-column: progressText;
