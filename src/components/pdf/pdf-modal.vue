@@ -3,7 +3,7 @@
     <div class="modal-backdrop">
       <div class="modal">
         <div class="nav-cover">
-          <remote-player :duration="duration"></remote-player>
+          <remote-player></remote-player>
           <progress-bar
             class="loadingBar"
             :val="loadingProgress"
@@ -58,7 +58,6 @@ export default {
       progressArray: [],
       loadingProgress: 0,
       loadingEndPointScale: 0,
-      duration: 420
     }
   },
 

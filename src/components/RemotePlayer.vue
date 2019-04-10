@@ -13,7 +13,7 @@
         @drag-end="playStatusUpdateDraggingEnd">
       </vue-slider>
     </div>
-    <div class="playbackTime"> {{ playbackTime }} </div>
+    <div class="playbackTime"> {{ playbackCountdown }} </div>
 
   </div>
 </template>
@@ -37,64 +37,76 @@
     data: function () {
       return {
         playbackPercent: 0,
-        playbackTime: this.duration,
-        playIndex: 0,
-        pdfIndex: 0,
+        durations: {},
+        indexes: {
+          playing: 0,
+          pdf: 0
+        },
         pdf: 0,
         playStatus: false,
         wasPlaying: false
       }
     },
-    props: ['duration'],
+
     methods: {
-      convertToDuration: function(time) {
-        return convertTimeToString(time);
-      },
-      calculateDurationRemaining(progress) {
-        let progressMul = progress / 100;
-        let newDurationSec = this.duration - (this.duration * progressMul);
-        return convertTimeToString(newDurationSec);
-      },
       togglePlayStatus() {
         if (this.playStatus) {
-          EventBus.$emit(`PAUSE_PLAYER_${this.pdfIndex}`);
+          EventBus.$emit(`PAUSE_PLAYER_${this.indexes.pdf}`);
         } else {
-          EventBus.$emit(`START_PLAYER_${this.pdfIndex}`);
+          EventBus.$emit(`START_PLAYER_${this.indexes.pdf}`);
         }
         this.playStatus = !this.playStatus;
       },
+
       updatePlaybackPercent(value) {
         //if things are playing we need to pause them and set a playback reminder
         if(this.playStatus) {
           this.wasPlaying = true;
           this.playStatus = false;
-          EventBus.$emit(`PAUSE_PLAYER_${this.pdfIndex}`);
+          EventBus.$emit(`PAUSE_PLAYER_${this.indexes.pdf}`);
         }
-        EventBus.$emit(`PLAYER_PROGRESS_UPDATE_${this.playIndex}`, this.playbackPercent);
+        EventBus.$emit(`PLAYER_PROGRESS_UPDATE_${this.indexes.playing}`, this.playbackPercent);
       },
+
       playStatusUpdateDraggingEnd() {
         //if we were playing before drag we need to play again.
         if(this.wasPlaying) {
           this.playStatus = true;
-          EventBus.$emit(`START_PLAYER_${this.pdfIndex}`);
+          EventBus.$emit(`START_PLAYER_${this.indexes.pdf}`);
         }
+      },
+
+      getDurations() {
+        //called when the pdf is opened. Gets the durations needed for both PDF and already playing.
+        return {
+          pdfDuration: this.$store.getters.getRequestedDuration(this.indexes.pdf),
+          playingDuration: this.$store.getters.getRequestedDuration(this.indexes.playing)
+        };
       }
     },
-    mounted() {
 
+    mounted() {
       let that = this;
       EventBus.$on("NEW_PROGRESS_PERCENT", (newPercent) => {
         that.playbackPercent = newPercent;
-        that.playbackTime = this.calculateDurationRemaining(newPercent);
       });
       EventBus.$on('OPEN_PDF_MODAL', (index) => {
         that.pdfIndex = index
+        this.durations = this.getDurations();
       });
       EventBus.$on("PLAYER_STATUS_CHANGE", (payload) => {
         that.playIndex = payload.index;
         that.playStatus = payload.playerIsPlaying;
       });
     },
+
+    computed: {
+      playbackCountdown() {
+        let progressMul = this.playbackPercent / 100;
+        let newDurationSec = this.durations.pdfDuration - (this.durations.pdfDuration * progressMul);
+        return convertTimeToString(newDurationSec);
+      }
+    }
   }
 
   //https://stackoverflow.com/questions/3733227/javascript-seconds-to-minutes-and-seconds

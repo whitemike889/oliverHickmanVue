@@ -49,12 +49,22 @@ export default {
       this.playbackPercent = percent;
     },
     playerStatusChange: function() {
+      // this.$store.getters.getRequestedDuration(this.index);
+      // console.log(this.$store.getters.getRequestedDuration(this.index));
       this.playerIsPlaying = !this.playerIsPlaying;
       EventBus.$emit('PLAYER_STATUS_CHANGE', {playerIsPlaying: this.playerIsPlaying, index: this.index});
     },
+    registerDurations: function() {
+      this.$store.commit({
+        type: 'addDuration',
+        index: this.index,
+        duration: this.player.duration
+      });
+    }
    },
   mounted () {
     //this binds the event listener on mount
+    this.player.on('ready', this.registerDurations)
     this.player.on('timeupdate', this.updatePlaybackBar);
     this.player.on('playing', this.playerStatusChange);
     this.player.on('pause', this.playerStatusChange);
