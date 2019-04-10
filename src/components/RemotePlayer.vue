@@ -4,6 +4,7 @@
       <font-awesome v-show="!playStatus" icon="play" class="fa" @click="togglePlayStatus"/>
       <font-awesome v-show="playStatus" icon="pause" class="fa" @click="togglePlayStatus"/>
     </div>
+    <div class="playbackTitle" v-html="whatTitleIsPlaying"> {{ whatTitleIsPlaying }} </div>
     <div class="playbackPosition">
       <vue-slider
         v-model="playbackPercent"
@@ -15,7 +16,6 @@
       </vue-slider>
     </div>
     <div class="playbackTime"> {{ playbackCountdown }} </div>
-
   </div>
 </template>
 
@@ -45,7 +45,8 @@
         },
         playStatus: false,
         wasPlaying: false,
-        whatIsPlayingOnOpen: -1
+        whatIsPlayingOnOpen: -1,
+        whatTitleIsPlaying: ''
       }
     },
 
@@ -56,6 +57,7 @@
           this.wasPlaying = false;
         } else {
           EventBus.$emit(`START_PLAYER_${this.indexes.pdf}`);
+          this.getWhatTitleIsPlayingNow();
         }
         this.playStatus = !this.playStatus;
       },
@@ -87,7 +89,10 @@
       },
 
       getWhatIsPlayingNow() {
-        return this.$store.state.whatIsPlaying;
+        return this.$store.state.whatIsPlaying.index;
+      },
+      getWhatTitleIsPlayingNow() {
+        return this.$store.state.whatIsPlaying.title;
       }
     },
 
@@ -100,6 +105,7 @@
         that.pdfIndex = index
         this.durations = this.getDurations();
         this.whatIsPlayingOnOpen = this.getWhatIsPlayingNow();
+        this.whatTitleIsPlaying = this.getWhatTitleIsPlayingNow();
       });
       EventBus.$on("PLAYER_STATUS_CHANGE", (payload) => {
         that.playIndex = payload.index;
@@ -116,7 +122,7 @@
         return convertTimeToString(newDurationSec);
       },
       toolTipValue() {
-        //TODO: combine these so it's less redundant. 
+        //TODO: combine these so it's less redundant.
         let whichDuration = (this.whatIsPlayingOnOpen > -1) ? 'playing' : 'pdf';
         let progressMul = this.playbackPercent / 100;
         let newDurationSec = this.durations[whichDuration] * progressMul;
@@ -148,6 +154,7 @@
   width: 50%;
   display: grid;
   grid-template-columns: [play] 1fr [progressBar] 75% [progressText] 1fr;
+  grid-template-rows: [top] 21px [bottom] 21px;
   align-items: center;
   position: absolute;
   z-index: 9002;
@@ -157,15 +164,27 @@
   right: 0;
 }
 .playbackPosition {
+  grid-row: bottom;
+  grid-column: progressBar;
+  padding-bottom: 4px;
+}
+.playbackTitle {
+  grid-row: top;
   grid-column: progressBar;
   justify-content: center;
+  font-family: "Nunito Sans", sans-serif;
+  color: #fff;
+  font-size: 13px;
+  padding-top: 8px;
 }
 .playbackTime {
+  grid-row: 1 / 3;
   grid-column: progressText;
   font-family: "Nunito Sans", sans-serif;
   color: #fff;
 }
 .playbackControls {
+  grid-row: 1 / 3;
   grid-column: play;
   justify-self: center;
 }

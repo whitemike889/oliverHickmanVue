@@ -58,7 +58,8 @@ export default {
       if(this.playerIsPlaying) {
         this.$store.commit({
           type: 'updateWhatIsPlaying',
-          index: this.index
+          index: this.index,
+          title: this.title
         });
       } else {
         this.$store.commit({
