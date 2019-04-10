@@ -8,6 +8,7 @@
       <vue-slider
         v-model="playbackPercent"
         :tooltip-placement="'bottom'"
+        :tooltip-formatter="`${toolTipValue}`"
         :contained="true"
         @dragging="updatePlaybackPercent"
         @drag-end="playStatusUpdateDraggingEnd">
@@ -42,9 +43,9 @@
           playing: 0,
           pdf: 0
         },
-        pdf: 0,
         playStatus: false,
-        wasPlaying: false
+        wasPlaying: false,
+        whatIsPlayingOnOpen: -1
       }
     },
 
@@ -52,6 +53,7 @@
       togglePlayStatus() {
         if (this.playStatus) {
           EventBus.$emit(`PAUSE_PLAYER_${this.indexes.pdf}`);
+          this.wasPlaying = false;
         } else {
           EventBus.$emit(`START_PLAYER_${this.indexes.pdf}`);
         }
@@ -79,9 +81,13 @@
       getDurations() {
         //called when the pdf is opened. Gets the durations needed for both PDF and already playing.
         return {
-          pdfDuration: this.$store.getters.getRequestedDuration(this.indexes.pdf),
-          playingDuration: this.$store.getters.getRequestedDuration(this.indexes.playing)
+          pdf: this.$store.getters.getRequestedDuration(this.indexes.pdf),
+          playing: this.$store.getters.getRequestedDuration(this.indexes.playing)
         };
+      },
+
+      getWhatIsPlayingNow() {
+        return this.$store.state.whatIsPlaying;
       }
     },
 
@@ -93,6 +99,7 @@
       EventBus.$on('OPEN_PDF_MODAL', (index) => {
         that.pdfIndex = index
         this.durations = this.getDurations();
+        this.whatIsPlayingOnOpen = this.getWhatIsPlayingNow();
       });
       EventBus.$on("PLAYER_STATUS_CHANGE", (payload) => {
         that.playIndex = payload.index;
@@ -102,8 +109,17 @@
 
     computed: {
       playbackCountdown() {
+        //we need konw if something was playing on open and what it was
+        let whichDuration = (this.whatIsPlayingOnOpen > -1) ? 'playing' : 'pdf';
         let progressMul = this.playbackPercent / 100;
-        let newDurationSec = this.durations.pdfDuration - (this.durations.pdfDuration * progressMul);
+        let newDurationSec = this.durations[whichDuration] - (this.durations[whichDuration] * progressMul);
+        return convertTimeToString(newDurationSec);
+      },
+      toolTipValue() {
+        //TODO: combine these so it's less redundant. 
+        let whichDuration = (this.whatIsPlayingOnOpen > -1) ? 'playing' : 'pdf';
+        let progressMul = this.playbackPercent / 100;
+        let newDurationSec = this.durations[whichDuration] * progressMul;
         return convertTimeToString(newDurationSec);
       }
     }

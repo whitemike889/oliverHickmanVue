@@ -49,10 +49,23 @@ export default {
       this.playbackPercent = percent;
     },
     playerStatusChange: function() {
-      // this.$store.getters.getRequestedDuration(this.index);
-      // console.log(this.$store.getters.getRequestedDuration(this.index));
       this.playerIsPlaying = !this.playerIsPlaying;
+      this.updateWhatIsPlaying();
       EventBus.$emit('PLAYER_STATUS_CHANGE', {playerIsPlaying: this.playerIsPlaying, index: this.index});
+    },
+    updateWhatIsPlaying() {
+      //remember what we are playing for the remote-player. If nothing then -1
+      if(this.playerIsPlaying) {
+        this.$store.commit({
+          type: 'updateWhatIsPlaying',
+          index: this.index
+        });
+      } else {
+        this.$store.commit({
+          type: 'updateWhatIsPlaying',
+          index: -1
+        });
+      }
     },
     registerDurations: function() {
       this.$store.commit({

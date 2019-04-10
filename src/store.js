@@ -5,13 +5,14 @@ Vue.use(Vuex);
 
 export default new Vuex.Store({
   state: {
-    durations: []
+    durations: [],
+    whatIsPlaying: -1
   },
 
   getters: {
     getRequestedDuration: (state) => (index) => {
       return state.durations[index];
-    }
+    },
   },
 
   mutations: {
@@ -19,6 +20,9 @@ export default new Vuex.Store({
       let index = payload.index;
       let duration = payload.duration;
       state.durations[index] = duration;
+    },
+    updateWhatIsPlaying(state, index) {
+      state.whatIsPlaying = index;
     }
   },
 
