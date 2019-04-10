@@ -53,21 +53,21 @@
     methods: {
       togglePlayStatus() {
         if (this.playStatus) {
-          EventBus.$emit(`PAUSE_PLAYER_${this.indexes.pdf}`);
+          EventBus.$emit(`PAUSE_PLAYER_${this.indexes.playing}`);
           this.wasPlaying = false;
         } else {
-          EventBus.$emit(`START_PLAYER_${this.indexes.pdf}`);
-          this.getWhatTitleIsPlayingNow();
+          EventBus.$emit(`START_PLAYER_${this.indexes.playing}`);
+          // this.indexes.playing = this.indexes.pdf;
         }
         this.playStatus = !this.playStatus;
       },
 
       updatePlaybackPercent(value) {
-        //if things are playing we need to pause them and set a playback reminder
+        //if things are playing we need to pause them and set a reminder to start again when done (wasPlaying)
         if(this.playStatus) {
           this.wasPlaying = true;
           this.playStatus = false;
-          EventBus.$emit(`PAUSE_PLAYER_${this.indexes.pdf}`);
+          EventBus.$emit(`PAUSE_PLAYER_${this.indexes.playing}`);
         }
         EventBus.$emit(`PLAYER_PROGRESS_UPDATE_${this.indexes.playing}`, this.playbackPercent);
       },
@@ -76,7 +76,7 @@
         //if we were playing before drag we need to play again.
         if(this.wasPlaying) {
           this.playStatus = true;
-          EventBus.$emit(`START_PLAYER_${this.indexes.pdf}`);
+          EventBus.$emit(`START_PLAYER_${this.indexes.playing}`);
         }
       },
 
@@ -86,6 +86,13 @@
           pdf: this.$store.getters.getRequestedDuration(this.indexes.pdf),
           playing: this.$store.getters.getRequestedDuration(this.indexes.playing)
         };
+      },
+
+      registerIndexes(pdfIndex) {
+        this.indexes = {
+          pdf: pdfIndex,
+          playing: this.whatIsPlayingOnOpen
+        }
       },
 
       getWhatIsPlayingNow() {
@@ -102,10 +109,10 @@
         that.playbackPercent = newPercent;
       });
       EventBus.$on('OPEN_PDF_MODAL', (index) => {
-        that.pdfIndex = index
-        this.durations = this.getDurations();
         this.whatIsPlayingOnOpen = this.getWhatIsPlayingNow();
         this.whatTitleIsPlaying = this.getWhatTitleIsPlayingNow();
+        this.registerIndexes(index);
+        this.durations = this.getDurations();
       });
       EventBus.$on("PLAYER_STATUS_CHANGE", (payload) => {
         that.playIndex = payload.index;
