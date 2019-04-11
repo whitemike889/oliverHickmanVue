@@ -57,7 +57,6 @@
           this.wasPlaying = false;
         } else {
           EventBus.$emit(`START_PLAYER_${this.indexes.playing}`);
-          // this.indexes.playing = this.indexes.pdf;
         }
         this.playStatus = !this.playStatus;
       },
@@ -98,9 +97,15 @@
       getWhatIsPlayingNow() {
         return this.$store.state.whatIsPlaying.index;
       },
-      getWhatTitleIsPlayingNow() {
-        return this.$store.state.whatIsPlaying.title;
-      }
+      getAppropriateTitle(index) {
+        if(this.playStatus) {
+          console.log("PLAYING");
+          return this.$store.state.whatIsPlaying.title;
+        } else {
+          console.log("NOT PLAYING");
+          return this.$store.getters.getRequestedTitle(index)
+        }
+      },
     },
 
     mounted() {
@@ -110,7 +115,7 @@
       });
       EventBus.$on('OPEN_PDF_MODAL', (index) => {
         this.whatIsPlayingOnOpen = this.getWhatIsPlayingNow();
-        this.whatTitleIsPlaying = this.getWhatTitleIsPlayingNow();
+        this.whatTitleIsPlaying = this.getAppropriateTitle(index);
         this.registerIndexes(index);
         this.durations = this.getDurations();
       });

@@ -74,6 +74,13 @@ export default {
         index: this.index,
         duration: this.player.duration
       });
+    },
+    registerTitles: function() {
+      this.$store.commit({
+        type: 'addTitle',
+        index: this.index,
+        title: this.title
+      });
     }
    },
   mounted () {
@@ -82,6 +89,7 @@ export default {
     this.player.on('timeupdate', this.updatePlaybackBar);
     this.player.on('playing', this.playerStatusChange);
     this.player.on('pause', this.playerStatusChange);
+    this.registerTitles();
     //listens on the EventBus for a new timecode from movementsBox. Updates current time
     //I'm using the EventBus instead of a custom event because I need to send a dynamic event handler.
     //Can't figure out an elgant solution to this with events.
@@ -98,7 +106,6 @@ export default {
     EventBus.$on(`PLAYER_PROGRESS_UPDATE_${this.index}`, (update) => {
       let updateMul = update / 100;
       let currentTime = this.duration * updateMul;
-      // console.log(this.duration);
       this.player.currentTime = currentTime;
     });
   },

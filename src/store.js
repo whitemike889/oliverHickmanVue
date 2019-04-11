@@ -6,6 +6,7 @@ Vue.use(Vuex);
 export default new Vuex.Store({
   state: {
     durations: [],
+    titles: [],
     whatIsPlaying: -1
   },
 
@@ -13,6 +14,9 @@ export default new Vuex.Store({
     getRequestedDuration: (state) => (index) => {
       return state.durations[index];
     },
+    getRequestedTitle: (state) => (index) => {
+      return state.titles[index];
+    }
   },
 
   mutations: {
@@ -23,6 +27,11 @@ export default new Vuex.Store({
     },
     updateWhatIsPlaying(state, index) {
       state.whatIsPlaying = index;
+    },
+    addTitle(state, payload) {
+      let index = payload.index;
+      let title = payload.title;
+      state.titles[index] = title;
     }
   },
 
