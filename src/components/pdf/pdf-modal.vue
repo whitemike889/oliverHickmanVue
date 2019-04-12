@@ -11,9 +11,11 @@
             bar-color="#012a15"
             bar-transition="all 0.1s ease"
           ></progress-bar>
-          <font-awesome icon="times" class="fa fa-times" @click="close"/>
-          <font-awesome icon="search-plus" class="fa fa-zoom" @click="zoomIn"/>
-          <font-awesome icon="search-minus" class="fa fa-zoom-out" @click="zoomOut"/>
+          <div class="left-controls">
+            <font-awesome icon="times" class="fa fa-times" @click="close"/>
+            <font-awesome icon="search-plus" class="fa fa-zoom" @click="zoomIn"/>
+            <font-awesome icon="search-minus" class="fa fa-zoom-out" @click="zoomOut"/>
+          </div>
         </div> <!-- end nav-cover -->
         <div class="pdf-wrapper">
           <div class="pdf-document" :key="scale">
@@ -143,30 +145,45 @@ export default {
     height: 100%;
   }
 
-  .nav-cover{
+  .nav-cover {
     background-color: #012a15;
     top: 0;
     width: 100vw;
     height: 42px;
     z-index: 8999;
   }
-  .fa {
+
+  .left-controls{
     position: absolute;
+    top: 0;
+    height: 42px;
+    width : 100px;
+    display: grid;
+    grid-row: 1;
+    grid-template-columns: [close] 1fr [zoom-in] 1fr [zoom-out] 1fr;
+    justify-items: center;
+  }
+
+  .fa {
+    position: relative;
     top: 13px;
     color: #fff;
     cursor: pointer;
     z-index: 9001;
   }
   .fa-times{
-    left: 15px;
+    grid-row: 1;
+    grid-column: close;
     transform:scale(2, 2);
   }
   .fa-zoom{
-    left: 50px;
+    grid-row: 1;
+    grid-column: zoom-in;
     transform:scale(1.6, 1.6);
   }
   .fa-zoom-out{
-    left: 85px;
+    grid-row: 1;
+    grid-column: zoom-out;
     transform:scale(1.6, 1.6);
   }
 

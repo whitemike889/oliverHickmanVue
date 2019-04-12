@@ -1,8 +1,9 @@
 <template>
   <div class="playbackWrapper">
     <div class="playbackControls">
-      <font-awesome v-show="!playStatus" icon="play" class="fa" @click="togglePlayStatus"/>
-      <font-awesome v-show="playStatus" icon="pause" class="fa" @click="togglePlayStatus"/>
+      <div class="controlWrapper circle-fa"><font-awesome icon="play-circle" class="fa playCircle" @click="togglePlayStatus"/></div>
+      <div class="controlWrapper play-pause"><font-awesome v-show="!playStatus" icon="play" class="fa" @click="togglePlayStatus"/></div>
+      <div class="controlWrapper play-pause"><font-awesome v-show="playStatus" icon="pause" class="fa" @click="togglePlayStatus"/></div>
     </div>
     <div class="playbackTitle" v-html="whatTitleIsPlaying"> {{ whatTitleIsPlaying }} </div>
     <div class="playbackPosition">
@@ -25,9 +26,9 @@
   import EventBus from '../eventBus.js';
 
   import { library } from '@fortawesome/fontawesome-svg-core'
-  import { faPlay, faPause } from '@fortawesome/free-solid-svg-icons';
+  import { faPlay, faPause,faPlayCircle } from '@fortawesome/free-solid-svg-icons';
   import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
-  library.add(faPlay, faPause);
+  library.add(faPlay, faPause, faPlayCircle);
 
   export default {
     name: 'remote-player',
@@ -207,11 +208,32 @@
   color: #fff;
 }
 .playbackControls {
+  height: 100%;
+  width: 100%;
   grid-row: 1 / 3;
   grid-column: play;
   justify-self: center;
+  display: grid;
+  grid-row-template: 1;
+  grid-template-columns: 1fr 1fr 1fr;
+}
+/* .playCircle {
+  left: 20px
+} */
+.controlWrapper.circle-fa{
+  grid-row: 1;
+  grid-column: 1;
+}
+.controlWrapper.play-pause{
+  /* justify-items: center; */
+  grid-row: 1;
+  grid-column: 2 / 4;
 }
 .playbackControls .fa {
+  /* display: inline-block; */
+  /* display: block;
+  margin-left: auto;
+  margin-right: auto; */
   transform: scale(1.1, 1.1);
 }
 .vue-slider-rail {
