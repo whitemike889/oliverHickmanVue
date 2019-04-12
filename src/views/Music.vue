@@ -30,9 +30,6 @@ import pdfModal from '@/components/pdf/pdf-modal.vue';
 import musicData from '@/musicData.json';
 import EventBus from '../eventBus.js';
 
-
-// const publicPath = process.env.BASE_URL;
-
 export default {
   components: {
     AudioPlayer,
@@ -56,7 +53,7 @@ export default {
     },
 
     togglePdfModal: function() {
-        this.modalIsShowing = !this.modalIsShowing;
+      this.modalIsShowing = !this.modalIsShowing;
     }
   },
 
@@ -66,6 +63,7 @@ export default {
       this.togglePdfModal();
       EventBus.$emit('LOAD_PDF', this.pdfFile[clickIndex])
       });
+
     //close the modal
     EventBus.$on('CLOSE_PDF_MODAL', () => {
       this.togglePdfModal();

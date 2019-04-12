@@ -100,11 +100,13 @@ export default {
   },
 
   mounted() {
-    let that = this; //I hate doing this so much is there a better way?
+    let that = this;
+    //load when it's time to load
     EventBus.$on('LOAD_PDF', function(file) {
       that.url = file;
       that.fetchPDF();
     });
+
     //When a page is rendered increase the loading bar
     EventBus.$on('PAGE_RENDERED', function(page) {
       that.progressArray.push(page);

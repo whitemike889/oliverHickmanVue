@@ -44,7 +44,7 @@
           pdf: 0
         },
         playStatus: false,
-        wasPlaying: false,
+        wasPlayingBeforeScrub: false,
         whatIsPlayingOnOpen: -1,
         whatTitleIsPlaying: ''
       }
@@ -52,41 +52,48 @@
 
     methods: {
       togglePlayStatus() {
-        if (this.playStatus) {
+        if (this.playStatus) { //if the player is playing pause it, and don't worry about scrubbing.
           EventBus.$emit(`PAUSE_PLAYER_${this.indexes.playing}`);
-          this.wasPlaying = false;
-        } else {
+          this.wasPlayingBeforeScrub = false;
+
+        } else if (this.playStatus == false && this.indexes.playing == -1) { // if the player is not playing and nothing was playing on open
+          EventBus.$emit(`START_PLAYER_${this.indexes.pdf}`);
+          this.indexes.playing = this.indexes.pdf;
+
+        } else { //if we're starting and that had been stopped.
           EventBus.$emit(`START_PLAYER_${this.indexes.playing}`);
+
         }
+        //toggle the playStatus no matter what.
         this.playStatus = !this.playStatus;
       },
 
       updatePlaybackPercent(value) {
-        //if things are playing we need to pause them and set a reminder to start again when done (wasPlaying)
-        if(this.playStatus) {
-          this.wasPlaying = true;
+        if(this.playStatus) { //if things are playing we need to pause them and set a reminder to start again when done (wasPlayingBeforeScrub)
+          this.wasPlayingBeforeScrub = true;
           this.playStatus = false;
           EventBus.$emit(`PAUSE_PLAYER_${this.indexes.playing}`);
         }
         EventBus.$emit(`PLAYER_PROGRESS_UPDATE_${this.indexes.playing}`, this.playbackPercent);
       },
 
+      //if we were playing before drag we need to play again.
       playStatusUpdateDraggingEnd() {
-        //if we were playing before drag we need to play again.
-        if(this.wasPlaying) {
+        if(this.wasPlayingBeforeScrub) {
           this.playStatus = true;
           EventBus.$emit(`START_PLAYER_${this.indexes.playing}`);
         }
       },
 
+      //called when the pdf is opened. Gets the durations needed for both PDF and already playing.
       getDurations() {
-        //called when the pdf is opened. Gets the durations needed for both PDF and already playing.
         return {
           pdf: this.$store.getters.getRequestedDuration(this.indexes.pdf),
           playing: this.$store.getters.getRequestedDuration(this.indexes.playing)
         };
       },
 
+      //just a local storage for indexes
       registerIndexes(pdfIndex) {
         this.indexes = {
           pdf: pdfIndex,
@@ -94,34 +101,38 @@
         }
       },
 
+      //goes to the store and gets the index of what is playing now
       getWhatIsPlayingNow() {
-        return this.$store.state.whatIsPlaying.index;
+        return this.$store.state.whatIsPlaying;
       },
+
+      //goes to the store and gets the title of whats playing
       getAppropriateTitle(index) {
-        if(this.playStatus) {
-          console.log("PLAYING");
-          return this.$store.state.whatIsPlaying.title;
-        } else {
-          console.log("NOT PLAYING");
+        if(this.playStatus) { //if playing get the playing title
+          return this.$store.state.titles[this.whatIsPlayingOnOpen];
+        } else { //or get the pdf title
           return this.$store.getters.getRequestedTitle(index)
         }
       },
     },
 
     mounted() {
-      let that = this;
-      EventBus.$on("NEW_PROGRESS_PERCENT", (newPercent) => {
-        that.playbackPercent = newPercent;
-      });
       EventBus.$on('OPEN_PDF_MODAL', (index) => {
+        //get what index is playing when we opened up
         this.whatIsPlayingOnOpen = this.getWhatIsPlayingNow();
+        //if something is playing set the playStatus to true
+        this.playStatus = (this.whatIsPlayingOnOpen == -1 ) ? false : true;
+        //get the title--either what is playing or pdf title
         this.whatTitleIsPlaying = this.getAppropriateTitle(index);
+        //get some data for what is playing and the pdf
         this.registerIndexes(index);
         this.durations = this.getDurations();
+        //update the play status bar if something is playing, else set it to 0
+        this.playbackPercent = (this.playStatus) ? this.playbackPercent : 0;
       });
-      EventBus.$on("PLAYER_STATUS_CHANGE", (payload) => {
-        that.playIndex = payload.index;
-        that.playStatus = payload.playerIsPlaying;
+
+      EventBus.$on("NEW_PROGRESS_PERCENT", (newPercent) => {
+        this.playbackPercent = newPercent;
       });
     },
 

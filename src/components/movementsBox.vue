@@ -64,7 +64,7 @@ export default {
     },
     //take the clicked element, find the time code, and emit the event to the EventBus
     selectMvmt: function(mvmtIndex) {
-      let newTimecodeEmit = `newTimecode_${this.index}`;
+      let newTimecodeEmit = `NEW_TIMECODE_${this.index}`;
       let newTimecodeString = this.mvmts[mvmtIndex].timecode;
       let newTimecode = newTimecodeString.toSeconds();
       EventBus.$emit(newTimecodeEmit, newTimecode);

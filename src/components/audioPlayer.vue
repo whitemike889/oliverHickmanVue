@@ -47,27 +47,25 @@ export default {
     updatePlaybackBar: function() {
       let percent = (this.player.currentTime / this.duration) * 100;
       this.playbackPercent = percent;
+      //send progress to modal
+      EventBus.$emit('NEW_PROGRESS_PERCENT', percent);
     },
+
+    //when the player stops, send it to the store
     playerStatusChange: function() {
       this.playerIsPlaying = !this.playerIsPlaying;
       this.updateWhatIsPlaying();
-      EventBus.$emit('PLAYER_STATUS_CHANGE', {playerIsPlaying: this.playerIsPlaying, index: this.index});
     },
     updateWhatIsPlaying() {
       //remember what we are playing for the remote-player. If nothing then -1
       if(this.playerIsPlaying) {
-        this.$store.commit({
-          type: 'updateWhatIsPlaying',
-          index: this.index,
-          title: this.title
-        });
+        this.$store.commit('updateWhatIsPlaying', this.index);
       } else {
-        this.$store.commit({
-          type: 'updateWhatIsPlaying',
-          index: -1
-        });
+        this.$store.commit('updateWhatIsPlaying', -1);
       }
     },
+
+    //store the duration
     registerDurations: function() {
       this.$store.commit({
         type: 'addDuration',
@@ -75,6 +73,8 @@ export default {
         duration: this.player.duration
       });
     },
+
+    //store the title
     registerTitles: function() {
       this.$store.commit({
         type: 'addTitle',
@@ -83,43 +83,44 @@ export default {
       });
     }
    },
+
   mounted () {
-    //this binds the event listener on mount
+    //send some data to the store
+    this.registerTitles();
     this.player.on('ready', this.registerDurations)
+
+    //do some things when the player changes
     this.player.on('timeupdate', this.updatePlaybackBar);
     this.player.on('playing', this.playerStatusChange);
     this.player.on('pause', this.playerStatusChange);
-    this.registerTitles();
-    //listens on the EventBus for a new timecode from movementsBox. Updates current time
-    //I'm using the EventBus instead of a custom event because I need to send a dynamic event handler.
-    //Can't figure out an elgant solution to this with events.
-    EventBus.$on(`newTimecode_${this.index}`, timecode => {
+
+    //update the player times. TIMECODE comes from movement box. PROGRESS comes from remote player
+    EventBus.$on(`NEW_TIMECODE_${this.index}`, timecode => {
       this.player.currentTime = timecode;
     });
+    EventBus.$on(`PLAYER_PROGRESS_UPDATE_${this.index}`, (update) => {
+      console.log(update);
+      let updateMul = update / 100;
+      let currentTime = this.duration * updateMul;
+      this.player.currentTime = currentTime;
+    });
+
+    //start and stop the plater when remote player says to
     EventBus.$on(`START_PLAYER_${this.index}`, () => {
       this.player.play();
     });
     EventBus.$on(`PAUSE_PLAYER_${this.index}`, () => {
       this.player.pause();
     });
-    let that = this;
-    EventBus.$on(`PLAYER_PROGRESS_UPDATE_${this.index}`, (update) => {
-      let updateMul = update / 100;
-      let currentTime = this.duration * updateMul;
-      this.player.currentTime = currentTime;
-    });
+
   },
   computed: {
     //define the player object. Can now be accessed through this.player
     player () { return this.$refs.plyr.player },
+    
     //returns the duration of the track
     duration () { return this.$refs.plyr.player.duration }
   },
-  watch: {
-    playbackPercent(value) {
-      EventBus.$emit('NEW_PROGRESS_PERCENT', value);
-    }
-  }
 }
 </script>
 

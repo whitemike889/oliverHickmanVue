@@ -25,13 +25,13 @@ export default new Vuex.Store({
       let duration = payload.duration;
       state.durations[index] = duration;
     },
-    updateWhatIsPlaying(state, index) {
-      state.whatIsPlaying = index;
-    },
     addTitle(state, payload) {
       let index = payload.index;
       let title = payload.title;
       state.titles[index] = title;
+    },
+    updateWhatIsPlaying(state, index) {
+      state.whatIsPlaying = index;
     }
   },
 
