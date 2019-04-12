@@ -158,6 +158,8 @@ export default {
     top: 0;
     height: 42px;
     width : 100px;
+    padding-left: 5px;
+    /* Set up the grid within */
     display: grid;
     grid-row: 1;
     grid-template-columns: [close] 1fr [zoom-in] 1fr [zoom-out] 1fr;

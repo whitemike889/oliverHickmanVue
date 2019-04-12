@@ -99,7 +99,6 @@ export default {
       this.player.currentTime = timecode;
     });
     EventBus.$on(`PLAYER_PROGRESS_UPDATE_${this.index}`, (update) => {
-      console.log(update);
       let updateMul = update / 100;
       let currentTime = this.duration * updateMul;
       this.player.currentTime = currentTime;
@@ -117,7 +116,7 @@ export default {
   computed: {
     //define the player object. Can now be accessed through this.player
     player () { return this.$refs.plyr.player },
-    
+
     //returns the duration of the track
     duration () { return this.$refs.plyr.player.duration }
   },

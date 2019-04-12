@@ -1,10 +1,16 @@
 <template>
   <div class="playbackWrapper">
     <div class="playbackControls">
-      <div class="controlWrapper circle-fa"><font-awesome icon="play-circle" class="fa playCircle" @click="togglePlayStatus"/></div>
-      <div class="controlWrapper play-pause"><font-awesome v-show="!playStatus" icon="play" class="fa" @click="togglePlayStatus"/></div>
-      <div class="controlWrapper play-pause"><font-awesome v-show="playStatus" icon="pause" class="fa" @click="togglePlayStatus"/></div>
-    </div>
+      <div class="controlWrapper circle-fa">
+        <font-awesome icon="play-circle" v-show="playThisScore" class="fa playCircle" @click="togglePlayStatus"/>
+      </div>
+      <div class="controlWrapper play-pause">
+        <font-awesome v-show="!playStatus" icon="play" class="fa" @click="togglePlayStatus"/>
+      </div>
+      <div class="controlWrapper play-pause">
+        <font-awesome v-show="playStatus" icon="pause" class="fa" @click="togglePlayStatus"/>
+      </div>
+    </div> <!-- end controlWrapper -->
     <div class="playbackTitle" v-html="whatTitleIsPlaying"> {{ whatTitleIsPlaying }} </div>
     <div class="playbackPosition">
       <vue-slider
@@ -15,7 +21,7 @@
         @dragging="updatePlaybackPercent"
         @drag-end="playStatusUpdateDraggingEnd">
       </vue-slider>
-    </div>
+    </div> <!-- end playbackPosition -->
     <div class="playbackTime"> {{ playbackCountdown }} </div>
   </div>
 </template>
@@ -47,7 +53,8 @@
         playStatus: false,
         wasPlayingBeforeScrub: false,
         whatIsPlayingOnOpen: -1,
-        whatTitleIsPlaying: ''
+        whatTitleIsPlaying: '',
+        // showPlayThisPdf: true
       }
     },
 
@@ -130,6 +137,7 @@
         this.durations = this.getDurations();
         //update the play status bar if something is playing, else set it to 0
         this.playbackPercent = (this.playStatus) ? this.playbackPercent : 0;
+        // this.showPlayThisPdf = (this.indexes.pdf != show.indexes.playing || this.indexes.playing != -1) ? false : true;
       });
 
       EventBus.$on("NEW_PROGRESS_PERCENT", (newPercent) => {
@@ -151,8 +159,15 @@
         let progressMul = this.playbackPercent / 100;
         let newDurationSec = this.durations[whichDuration] * progressMul;
         return convertTimeToString(newDurationSec);
+      },
+      playThisScore() {
+        if(this.indexes.pdf == this.indexes.playing || this.indexes.playing == -1) {
+          return false;
+        } else {
+          return true;
+        }
       }
-    }
+    },
   }
 
   //https://stackoverflow.com/questions/3733227/javascript-seconds-to-minutes-and-seconds
