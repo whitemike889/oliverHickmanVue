@@ -1,9 +1,6 @@
 <template>
   <div class="playbackWrapper">
     <div class="playbackControls">
-      <div class="controlWrapper circle-fa">
-        <font-awesome icon="play-circle" v-show="playThisScore" class="fa playCircle" @click="togglePlayStatus"/>
-      </div>
       <div class="controlWrapper play-pause">
         <font-awesome v-show="!playStatus" icon="play" class="fa" @click="togglePlayStatus"/>
       </div>
@@ -11,7 +8,16 @@
         <font-awesome v-show="playStatus" icon="pause" class="fa" @click="togglePlayStatus"/>
       </div>
     </div> <!-- end controlWrapper -->
-    <div class="playbackTitle" v-html="whatTitleIsPlaying"> {{ whatTitleIsPlaying }} </div>
+    <div class="playbackTitle">
+      <popper trigger="click" :options="popperOpts" :visible-arrow="false">
+        <font-awesome icon="ellipsis-v" class="fa titleOptions" slot="reference"/>
+        <div class="popper">
+          Content
+        </div>
+      </popper>
+
+      <span id="title" v-html="whatTitleIsPlaying"></span>
+    </div>
     <div class="playbackPosition">
       <vue-slider
         v-model="playbackPercent"
@@ -29,18 +35,22 @@
 <script>
   import VueSlider from 'vue-slider-component';
   import 'vue-slider-component/theme/default.css';
+  import Popper from 'vue-popperjs';
+  import 'vue-popperjs/dist/vue-popper.css';
   import EventBus from '../eventBus.js';
 
   import { library } from '@fortawesome/fontawesome-svg-core'
-  import { faPlay, faPause,faPlayCircle } from '@fortawesome/free-solid-svg-icons';
+  import { faPlay, faPause, faEllipsisV } from '@fortawesome/free-solid-svg-icons';
   import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
-  library.add(faPlay, faPause, faPlayCircle);
+  library.add(faPlay, faPause, faEllipsisV);
 
   export default {
     name: 'remote-player',
     components: {
       VueSlider,
       'font-awesome': FontAwesomeIcon,
+      'popper': Popper
+
     },
     data: function () {
       return {
@@ -54,7 +64,14 @@
         wasPlayingBeforeScrub: false,
         whatIsPlayingOnOpen: -1,
         whatTitleIsPlaying: '',
-        // showPlayThisPdf: true
+        popperOpts: {
+          placement: 'top-start',
+          modifiers: {
+            preventOverflow: {
+              enabled: false
+            }
+          }
+        }
       }
     },
 
@@ -188,6 +205,7 @@
 </script>
 
 <style>
+
 .playbackWrapper {
   height: 42px;
   width: 50%;
@@ -215,7 +233,9 @@
   color: #fff;
   font-size: 13px;
   padding-top: 8px;
+  display: inline-block;
 }
+
 .playbackTime {
   grid-row: 1 / 3;
   grid-column: progressText;
@@ -232,24 +252,20 @@
   grid-row-template: 1;
   grid-template-columns: 1fr 1fr 1fr;
 }
-/* .playCircle {
-  left: 20px
-} */
 .controlWrapper.circle-fa{
   grid-row: 1;
   grid-column: 1;
 }
 .controlWrapper.play-pause{
-  /* justify-items: center; */
   grid-row: 1;
   grid-column: 2 / 4;
 }
 .playbackControls .fa {
-  /* display: inline-block; */
-  /* display: block;
-  margin-left: auto;
-  margin-right: auto; */
   transform: scale(1.1, 1.1);
+}
+.titleOptions.fa {
+  top: 0;
+  padding-right: 5px;
 }
 .vue-slider-rail {
   background-color: #747777;
