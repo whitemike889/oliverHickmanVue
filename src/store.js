@@ -16,6 +16,9 @@ export default new Vuex.Store({
     },
     getRequestedTitle: (state) => (index) => {
       return state.titles[index];
+    },
+    getAllTitles(state) {
+      return state.titles;
     }
   },
 

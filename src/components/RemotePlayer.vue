@@ -12,7 +12,7 @@
       <popper trigger="click" :options="popperOpts" :visible-arrow="false">
         <font-awesome icon="ellipsis-v" class="fa titleOptions" slot="reference"/>
         <div class="popper">
-          Content
+          <div v-for="title in allTitles"> {{ title }} </div>
         </div>
       </popper>
 
@@ -68,6 +68,9 @@
           placement: 'top-start',
           modifiers: {
             preventOverflow: {
+              enabled: false
+            },
+            hide: {
               enabled: false
             }
           }
@@ -183,6 +186,10 @@
         } else {
           return true;
         }
+      },
+      allTitles() {
+        // console.log();
+        return this.$store.getters.getAllTitles;
       }
     },
   }
