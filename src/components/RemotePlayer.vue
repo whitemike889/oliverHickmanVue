@@ -12,8 +12,21 @@
       <popper trigger="click" :options="popperOpts" :visible-arrow="false">
         <font-awesome icon="ellipsis-v" class="fa titleOptions" slot="reference"/>
         <div class="popper">
-          <div v-for="title in allTitles"> {{ title }} </div>
-        </div>
+          <table class="popper-table">
+            <tr class="popper-title-row"
+              v-for="(title, index) in allTitles"
+              v-show="shouldShowPopperRow(index)"
+              @mouseover="popperOpts.hover=index"
+              @mouseout="popperOpts.hover=-1"
+            >
+              <td class="popper-title" v-html="title"></td>
+              <td class="popper-fa">
+                <font-awesome icon="eye" v-show="(index == indexes.pdf && popperOpts.hover!=index)" />
+                <font-awesome icon="play-circle" v-show="popperOpts.hover==index" />
+              </td>
+            </tr> <!-- end class="popper-title-row" -->
+          </table>
+        </div> <!-- end class=popper -->
       </popper>
 
       <span id="title" v-html="whatTitleIsPlaying"></span>
@@ -40,9 +53,9 @@
   import EventBus from '../eventBus.js';
 
   import { library } from '@fortawesome/fontawesome-svg-core'
-  import { faPlay, faPause, faEllipsisV } from '@fortawesome/free-solid-svg-icons';
+  import { faPlay, faPause, faEllipsisV, faPlayCircle, faEye } from '@fortawesome/free-solid-svg-icons';
   import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
-  library.add(faPlay, faPause, faEllipsisV);
+  library.add(faPlay, faPause, faEllipsisV, faPlayCircle, faEye);
 
   export default {
     name: 'remote-player',
@@ -65,6 +78,7 @@
         whatIsPlayingOnOpen: -1,
         whatTitleIsPlaying: '',
         popperOpts: {
+          hover: false,
           placement: 'top-start',
           modifiers: {
             preventOverflow: {
@@ -142,7 +156,24 @@
           return this.$store.getters.getRequestedTitle(index)
         }
       },
-    },
+
+      //figure out what's needed in the popper menu
+      shouldShowPopperRow(rowIndex) {
+        if (this.indexes.playing != -1) { //if something is playing
+          if (rowIndex == this.indexes.playing) { //if the row matches what is playing
+            return false;
+          } else { //if the row doens't match what is playing
+            return true;
+          }
+        } else { //if nothing is playing
+          if (rowIndex == this.indexes.pdf) { //if the row is the current pdf
+            return false;
+          } else { //if the row is not the pdf
+            return true;
+          }
+        }
+      }
+  },
 
     mounted() {
       EventBus.$on('OPEN_PDF_MODAL', (index) => {
@@ -188,7 +219,6 @@
         }
       },
       allTitles() {
-        // console.log();
         return this.$store.getters.getAllTitles;
       }
     },
@@ -243,6 +273,35 @@
   display: inline-block;
 }
 
+.popper {
+  padding: 3px;
+  color: #000;
+}
+.popper-table{
+  border-collapse: collapse;
+}
+.popper-title {
+  text-align: left;
+}
+.popper-fa{
+  width: 20px;
+  padding-right: 4px;
+}
+
+.popper-fa .fa-eye {
+  position: relative;
+  right: 0;
+  top: 2px;
+  transition: none;
+}
+
+.popper-title-row:hover {
+  background-color: #747777;
+  cursor: pointer;
+  color: #fff;
+  /* transition: all 0.1s ease; */
+}
+
 .playbackTime {
   grid-row: 1 / 3;
   grid-column: progressText;
@@ -272,7 +331,9 @@
 }
 .titleOptions.fa {
   top: 0;
-  padding-right: 5px;
+  padding-top: 5;
+  /* padding-left: 10px; */
+  float: left;
 }
 .vue-slider-rail {
   background-color: #747777;
