@@ -18,6 +18,7 @@
               v-show="shouldShowPopperRow(index)"
               @mouseover="popperOpts.hover=index"
               @mouseout="popperOpts.hover=-1"
+              @click="playInstead(index)"
             >
               <td class="popper-title" v-html="title"></td>
               <td class="popper-fa">
@@ -70,12 +71,11 @@
         playbackPercent: 0,
         durations: {},
         indexes: {
-          playing: 0,
+          playing: -1,
           pdf: 0
         },
         playStatus: false,
         wasPlayingBeforeScrub: false,
-        whatIsPlayingOnOpen: -1,
         whatTitleIsPlaying: '',
         popperOpts: {
           hover: false,
@@ -110,6 +110,19 @@
         this.playStatus = !this.playStatus;
       },
 
+      playInstead(indexRequested) {
+        if (this.playStatus) { //if the player is playing pause it
+          EventBus.$emit(`PAUSE_PLAYER_${this.indexes.playing}`);
+        }
+
+        //update some data
+        EventBus.$emit(`START_PLAYER_${indexRequested}`);
+        this.indexes.playing = indexRequested;
+        this.playStatus = true;
+        this.whatTitleIsPlaying = this.$store.getters.getRequestedTitle(indexRequested);
+        this.playbackCountdown;
+      },
+
       updatePlaybackPercent(value) {
         if(this.playStatus) { //if things are playing we need to pause them and set a reminder to start again when done (wasPlayingBeforeScrub)
           this.wasPlayingBeforeScrub = true;
@@ -128,30 +141,35 @@
       },
 
       //called when the pdf is opened. Gets the durations needed for both PDF and already playing.
-      getDurations() {
+      // getDurations() {
+      //   return {
+      //     pdf: this.$store.getters.getRequestedDuration(this.indexes.pdf),
+      //     playing: this.$store.getters.getRequestedDuration(this.indexes.playing)
+      //   };
+      // },
+
+      getElapsedTime() {
+        let whichDuration = (this.indexes.playing > -1) ? 'playing' : 'pdf';
+        let progressMul = this.playbackPercent / 100;
+        let duration = this.$store.getters.getRequestedDuration(this.indexes[whichDuration])
         return {
-          pdf: this.$store.getters.getRequestedDuration(this.indexes.pdf),
-          playing: this.$store.getters.getRequestedDuration(this.indexes.playing)
-        };
+          progressMul: progressMul,
+          duration: duration
+        }
       },
 
       //just a local storage for indexes
       registerIndexes(pdfIndex) {
         this.indexes = {
           pdf: pdfIndex,
-          playing: this.whatIsPlayingOnOpen
+          playing: this.$store.state.whatIsPlaying
         }
-      },
-
-      //goes to the store and gets the index of what is playing now
-      getWhatIsPlayingNow() {
-        return this.$store.state.whatIsPlaying;
       },
 
       //goes to the store and gets the title of whats playing
       getAppropriateTitle(index) {
         if(this.playStatus) { //if playing get the playing title
-          return this.$store.state.titles[this.whatIsPlayingOnOpen];
+          return this.$store.state.titles[this.indexes.playing];
         } else { //or get the pdf title
           return this.$store.getters.getRequestedTitle(index)
         }
@@ -177,18 +195,21 @@
 
     mounted() {
       EventBus.$on('OPEN_PDF_MODAL', (index) => {
-        //get what index is playing when we opened up
-        this.whatIsPlayingOnOpen = this.getWhatIsPlayingNow();
         //if something is playing set the playStatus to true
-        this.playStatus = (this.whatIsPlayingOnOpen == -1 ) ? false : true;
+        this.playStatus = (this.indexes.playing == -1 ) ? false : true;
         //get the title--either what is playing or pdf title
         this.whatTitleIsPlaying = this.getAppropriateTitle(index);
         //get some data for what is playing and the pdf
         this.registerIndexes(index);
-        this.durations = this.getDurations();
         //update the play status bar if something is playing, else set it to 0
         this.playbackPercent = (this.playStatus) ? this.playbackPercent : 0;
-        // this.showPlayThisPdf = (this.indexes.pdf != show.indexes.playing || this.indexes.playing != -1) ? false : true;
+
+      });
+
+      EventBus.$on("CLOSE_PDF_MODAL", () => {
+        if(!this.playStatus) { //if something is not playing when the modal is closed, reset the play index
+          this.indexes.playing = -1;
+        }
       });
 
       EventBus.$on("NEW_PROGRESS_PERCENT", (newPercent) => {
@@ -198,25 +219,14 @@
 
     computed: {
       playbackCountdown() {
-        //we need konw if something was playing on open and what it was
-        let whichDuration = (this.whatIsPlayingOnOpen > -1) ? 'playing' : 'pdf';
-        let progressMul = this.playbackPercent / 100;
-        let newDurationSec = this.durations[whichDuration] - (this.durations[whichDuration] * progressMul);
+        let elapsedTime = this.getElapsedTime();
+        let newDurationSec = elapsedTime.duration - (elapsedTime.duration * elapsedTime.progressMul);
         return convertTimeToString(newDurationSec);
       },
       toolTipValue() {
-        //TODO: combine these so it's less redundant.
-        let whichDuration = (this.whatIsPlayingOnOpen > -1) ? 'playing' : 'pdf';
-        let progressMul = this.playbackPercent / 100;
-        let newDurationSec = this.durations[whichDuration] * progressMul;
+        let elapsedTime = this.getElapsedTime();
+        let newDurationSec = elapsedTime.duration * elapsedTime.progressMul;
         return convertTimeToString(newDurationSec);
-      },
-      playThisScore() {
-        if(this.indexes.pdf == this.indexes.playing || this.indexes.playing == -1) {
-          return false;
-        } else {
-          return true;
-        }
       },
       allTitles() {
         return this.$store.getters.getAllTitles;
@@ -227,11 +237,11 @@
   //https://stackoverflow.com/questions/3733227/javascript-seconds-to-minutes-and-seconds
   function convertTimeToString(time) {
     // Hours, minutes and seconds
-    var hrs = ~~(time / 3600);
-    var mins = ~~((time % 3600) / 60);
-    var secs = ~~time % 60;
+    let hrs = ~~(time / 3600);
+    let mins = ~~((time % 3600) / 60);
+    let secs = ~~time % 60;
     // Output like "1:01" or "4:03:59" or "123:03:59"
-    var ret = "";
+    let ret = "";
     if (hrs > 0) {
       ret += "" + hrs + ":" + (mins < 10 ? "0" : "");
     }
