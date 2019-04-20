@@ -120,7 +120,7 @@
         this.indexes.playing = indexRequested;
         this.playStatus = true;
         this.whatTitleIsPlaying = this.$store.getters.getRequestedTitle(indexRequested);
-        this.playbackCountdown;
+        this.playbackCountdown;    
       },
 
       updatePlaybackPercent(value) {

@@ -88,4 +88,10 @@ a:visited {
   opacity: 0;
 }
 
+/* For the parallax */
+.Masthead {
+  z-index: 1 !important;
+  min-height: auto !important;
+}
+
 </style>

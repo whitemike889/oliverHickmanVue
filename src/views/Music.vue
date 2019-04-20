@@ -1,8 +1,10 @@
 <template>
   <div id="music">
-    <div class="imgContainer1">
-      <img class="img" src="@/assets/img/Oliver+Kiersten-169.jpg" alt="noImg">
-    </div>
+    <parallax :speedFactor="0.2" direction="down">
+    <!-- <div class="imgContainer1"> -->
+        <img src="@/assets/img/Oliver+Kiersten-169.jpg" alt="noImg">
+    <!-- </div> -->
+  </parallax>
     <div class="content">
       <h1> MUSIC </h1>
       <pdf-modal v-show="modalIsShowing" />
@@ -24,6 +26,7 @@
 </template>
 
 <script>
+import Parallax from 'vue-parallaxy';
 import AudioPlayer from '@/components/audioPlayer.vue';
 import coverViewer from '@/components/coverViewer.vue';
 import pdfModal from '@/components/pdf/pdf-modal.vue';
@@ -32,6 +35,7 @@ import EventBus from '../eventBus.js';
 
 export default {
   components: {
+    Parallax,
     AudioPlayer,
     coverViewer,
     pdfModal
