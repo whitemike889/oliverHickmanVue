@@ -67,6 +67,7 @@ export default {
 
     //store the duration
     registerDurations: function() {
+      console.log(this.player.duration);
       this.$store.commit({
         type: 'addDuration',
         index: this.index,
