@@ -1,30 +1,33 @@
 <template>
-<div class="movementBoxWrapper">
+<div class="playerMovementBoxWrapper">
   <div class="showMoreMvmts" v-bind:class="{upShiftMargin: isShowing}">
-    <font-awesome class="angle-up" icon="angle-up"
-      v-on:click="toggleMvnts"
-      v-show="isShowing"
-      v-bind:class="{grow: moreGrow}"
-    />
-    <p v-on:click="toggleMvnts"
-      v-on:mouseover="moreGrow=true"
-      v-on:mouseleave="moreGrow=false"
-    > MOVEMENTS </p>
-    <font-awesome class="angle-down" icon="angle-down"
-      v-on:click="toggleMvnts"
-      v-show="!isShowing"
-      v-bind:class="{grow: moreGrow}"
-    />
-  </div>
-  <div class="moreMvmts"
-    v-bind:style="columnsCalc"
-    v-bind:class="[animation, {active: firstShow}, {upShiftTop: !isShowing}]"
-    >
-    <div v-for="(mvmt, mvmtIndex) in mvmts"
-      class="mvmt"
-      v-text="mvmt.title"
-      v-on:click="selectMvmt(mvmtIndex)"
-    ></div>
+    <popper trigger="click" :options="popperOpts" :visible-arrow="true">
+      <!-- <font-awesome class="angle-up" icon="angle-up"
+        v-on:click="toggleMvnts"
+        v-show="isShowing"
+        v-bind:class="{grow: moreGrow}"
+        slot="reference"
+      /> -->
+      <!-- <p v-on:click="toggleMvnts"
+        v-on:mouseover="moreGrow=true"
+        v-on:mouseleave="moreGrow=false"
+      > MOVEMENTS </p> -->
+      <!-- <p class="popper">TEST</p> -->
+      <div class="moreMvmts popper"v-bind:style="columnsCalc">
+        <div v-for="(mvmt, mvmtIndex) in mvmts"
+          class="mvmt"
+          v-text="mvmt.title"
+          v-on:click="selectMvmt(mvmtIndex)"
+        ></div>
+      </div>
+      <p slot="reference">MOVEMENTS</p>
+      <!-- <font-awesome class="angle-down" icon="angle-down"
+        v-on:click="toggleMvnts"
+        v-show="!isShowing"
+        v-bind:class="{grow: moreGrow}"
+        slot="reference"
+      /> -->
+    </popper>
   </div>
 </div>
 </template>
@@ -36,6 +39,8 @@ import { faAngleDown } from '@fortawesome/free-solid-svg-icons';
 import { faAngleUp } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
 
+import Popper from 'vue-popperjs';
+import 'vue-popperjs/dist/vue-popper.css';
 
 import 'animate.css/animate.min.css';
 import EventBus from '../eventBus.js';
@@ -45,14 +50,27 @@ library.add(faAngleUp);
 
 export default {
   components: {
-    'font-awesome': FontAwesomeIcon
+    'font-awesome': FontAwesomeIcon,
+    'popper': Popper
   },
   data: function() {
     return {
-      isShowing: false,
-      firstShow: false,
-      animation: '',
-      moreGrow: false
+      // isShowing: false,
+      // firstShow: false,
+      // animation: '',
+      // moreGrow: false,
+      popperOpts: {
+        hover: false,
+        placement: 'bottom',
+        modifiers: {
+          preventOverflow: {
+            enabled: false
+          },
+          hide: {
+            enabled: false
+          }
+        }
+      }
     }
   },
   methods: {
@@ -92,40 +110,19 @@ String.prototype.toSeconds = function() {
 </script>
 
 <style>
-/* fa-arrows */
-.angle-down {
-  margin-top: -6px;
-  vertical-align: 1em;
-  cursor: pointer;
-  transition: all 0.1s ease;
-}
-.angle-down:hover{
-  transform:scale(1.25, 1);
-}
-.angle-up {
-  margin-bottom: -8px;
-  vertical-align: -0.125em;
-  cursor: pointer;
-  transition: all 0.1s ease;
-  position: relative;
-  top: 0;
-}
-.angle-up:hover{
-  transform:scale(1.25, 1);
-}
-.grow {
-  transform:scale(1.25, 1);
-}
 
 /* wraps the button and the grid */
-.movementBoxWrapper {
+.playerMovementBoxWrapper {
   position: relative;
-  z-index: 4;
-  margin-top: 2px;
+  z-index: 10;
 }
 .movementBoxWrapper p {
   margin-top: 0px;
   line-height: 20px;
+}
+
+.moreMvmts.popper[x-placement^="bottom"] {
+  margin-top: 0px;
 }
 
 /* The MOVEMENTS button */
@@ -145,14 +142,10 @@ String.prototype.toSeconds = function() {
 
 /* the grid wrapper */
 .moreMvmts {
-  display: none;
+  display: inline-grid;
   grid-template-rows: auto;
   column-gap: 30px;
   position: relative;
-  z-index: 1;
-}
-.active {
-  display: inline-grid;
 }
 
 /* the grid cells */
