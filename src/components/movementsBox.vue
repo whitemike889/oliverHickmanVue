@@ -1,18 +1,7 @@
 <template>
 <div class="playerMovementBoxWrapper">
-  <div class="showMoreMvmts" v-bind:class="{upShiftMargin: isShowing}">
+  <div class="showMoreMvmts">
     <popper trigger="click" :options="popperOpts" :visible-arrow="true">
-      <!-- <font-awesome class="angle-up" icon="angle-up"
-        v-on:click="toggleMvnts"
-        v-show="isShowing"
-        v-bind:class="{grow: moreGrow}"
-        slot="reference"
-      /> -->
-      <!-- <p v-on:click="toggleMvnts"
-        v-on:mouseover="moreGrow=true"
-        v-on:mouseleave="moreGrow=false"
-      > MOVEMENTS </p> -->
-      <!-- <p class="popper">TEST</p> -->
       <div class="moreMvmts popper"v-bind:style="columnsCalc">
         <div v-for="(mvmt, mvmtIndex) in mvmts"
           class="mvmt"
@@ -20,13 +9,11 @@
           v-on:click="selectMvmt(mvmtIndex)"
         ></div>
       </div>
-      <p slot="reference">MOVEMENTS</p>
-      <!-- <font-awesome class="angle-down" icon="angle-down"
-        v-on:click="toggleMvnts"
-        v-show="!isShowing"
-        v-bind:class="{grow: moreGrow}"
-        slot="reference"
-      /> -->
+
+      <div slot="reference">
+        <font-awesome icon="ellipsis-v" class="movementButton"/>
+        <p class="movementButton">MOVEMENTS</p>
+      </div>
     </popper>
   </div>
 </div>
@@ -35,8 +22,8 @@
 <script>
 
 import { library } from '@fortawesome/fontawesome-svg-core'
-import { faAngleDown } from '@fortawesome/free-solid-svg-icons';
-import { faAngleUp } from '@fortawesome/free-solid-svg-icons';
+import { faEllipsisV } from '@fortawesome/free-solid-svg-icons';
+// import { faAngleUp } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
 
 import Popper from 'vue-popperjs';
@@ -45,8 +32,8 @@ import 'vue-popperjs/dist/vue-popper.css';
 import 'animate.css/animate.min.css';
 import EventBus from '../eventBus.js';
 
-library.add(faAngleDown);
-library.add(faAngleUp);
+library.add(faEllipsisV);
+// library.add(faAngleUp);
 
 export default {
   components: {
@@ -126,6 +113,7 @@ String.prototype.toSeconds = function() {
 }
 
 /* The MOVEMENTS button */
+
 .showMoreMvmts {
   height: auto;
   position: relative;
@@ -134,9 +122,10 @@ String.prototype.toSeconds = function() {
 
 .showMoreMvmts p {
   font-family: 'Nunito Sans', sans-serif;
-  font-size: 13px;
+  font-size: 14px;
   margin: 0px;
-  display: block;
+  padding-left: 5px;
+  display: inline;
   cursor: pointer;
 }
 
