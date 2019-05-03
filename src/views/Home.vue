@@ -15,15 +15,15 @@
     </div>
 
     <div class="homeContent">
-        <div class="logo">
-            <img class="logoImg" src="@/assets/img/headphones-icon.png" alt="noLogo">
-        </div>
-        <div class="text">
-            <h1> COMPOSER, MUSIC TECHNOLOGIST, </br> GUITARIST, SOUND DESIGNER </h1>
-            <p> Oliver Hickman is a composer, music technologist, guitarist, and sound designer
-                currently residing in Brooklyn, New York. </br> </p>
-            <h1> <router-link to="/about"> MORE ABOUT OLIVER >> </router-link> </h1>
-        </div>
+      <div class="logo">
+          <img class="logoImg" src="@/assets/img/headphones-icon.png" alt="noLogo">
+      </div>
+      <div class="text">
+        <h1> COMPOSER, MUSIC TECHNOLOGIST, </br> GUITARIST, SOUND DESIGNER </h1>
+        <p> Oliver Hickman is a composer, music technologist, guitarist, and sound designer
+            currently residing in Brooklyn, New York. </br> </p>
+        <h1> <router-link to="/about"> MORE ABOUT OLIVER >> </router-link> </h1>
+      </div>
     </div>
 
     <div class="linkBoxGrid">

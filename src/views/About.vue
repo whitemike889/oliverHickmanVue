@@ -1,8 +1,15 @@
 <template>
   <div class=aboutWrapper>
     <div class="imgContainer1">
-      <img class="img" src="@/assets/img/Oliver+Kiersten-184.jpg" alt="noImg">
+      <parallax
+        class= 'img'
+        :speedFactor="0.15" direction="down"
+        breakpoint="(min-width: 10px)"
+      >
+        <img src="@/assets/img/Oliver+Kiersten-184.jpg" alt="noImg">
+      </parallax>
     </div>
+    
     <div class = "bioDiv">
       <h1> OLIVER HICKMAN </h1>
       <p class="bioText"> Oliver Hickman is a composer, music technologist, guitarist, and sound designer currently residing in Brooklyn, New York.
@@ -22,6 +29,17 @@
     </div>
   </div>
 </template>
+
+<script>
+import Parallax from 'vue-parallaxy';
+
+export default {
+  components: {
+    Parallax,
+  },
+}
+</script>
+
 
 <style>
 .bioDiv {
