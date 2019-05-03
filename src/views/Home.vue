@@ -1,11 +1,17 @@
 <template>
   <div class="home">
     <div class="imgContainer1">
-        <img class="img" src="@/assets/img/image1-okhick-bw-crop.jpg" alt="noImg">
-        <div class="titleNameBox">
-            <p class="firstName">OLIVER</p>
-            <p class="lastName">HICKMAN</p>
-        </div>
+      <parallax
+        class= 'img'
+        :speedFactor="0.15" direction="down"
+        breakpoint="(min-width: 10px)"
+      >
+        <img src="@/assets/img/image1-okhick-bw-crop.jpg" alt="noImg">
+      </parallax>
+      <div class="titleNameBox">
+        <p class="firstName">OLIVER</p>
+        <p class="lastName">HICKMAN</p>
+      </div>
     </div>
 
     <div class="homeContent">
@@ -21,7 +27,15 @@
     </div>
 
     <div class="linkBoxGrid">
-      <img class="gridPicture" src="@/assets/img/image2-okhick-bw-crop.jpg">
+      <parallax
+        class="gridPicture"
+        :speedFactor="0.15"
+        direction="down"
+        breakpoint="(min-width: 10px)"
+        v-bind:style="{ marginTop: img2Margin + 'px' }"
+      >
+        <img src="@/assets/img/image2-okhick-bw-crop.jpg" ref="img2">
+      </parallax>
       <div class="img2Top"></div>
       <div class="musicLinkBox">
         <router-link to="/music" class="musicLink"> LISTEN TO MUSIC </router-link>
@@ -31,7 +45,37 @@
   </div>
 </template>
 
+<script>
+import Parallax from 'vue-parallaxy';
+
+export default {
+  components: {
+    Parallax,
+  },
+
+  data: function() {
+    return {
+      img2Margin: 0
+    }
+  },
+
+  mounted() {
+    //Becase the second picture also scrolls down, we need to offset it.
+    //the 0.15 comes from the parallax speed. Add ten for good measure.
+    const img2Height = this.$refs.img2.clientHeight;
+    this.img2Margin = (img2Height * 0.15 + 10) * -1;
+  }
+}
+</script>
+
 <style>
+/* The top image */
+.imgContainer1 {
+  grid-row: img1;
+  display: inline-grid;
+  position: relative;
+  z-index: 1;
+}
 /* Bottom Image */
 .linkBoxGrid {
   grid-row: img2;
@@ -43,6 +87,7 @@
   grid-row: 1 / 4;
   grid-column: 1 / 4;
   width: 100vw;
+  object-fit: cover;
 }
 .img2Top {
   grid-row: 1;
@@ -55,6 +100,8 @@
   outline-color: #ffffff;
   outline-width: 10px;
   padding: 30px;
+  position: relative;
+  z-index: 2;
 }
 .musicLink {
   font-size: 32px;
@@ -73,6 +120,7 @@
   right: 0%;
   bottom: 0%;
   padding: 0 40px 20px;
+  z-index: 1;
 }
 p.firstName {
   font-size: 75px;
@@ -103,6 +151,10 @@ p.lastName{
   justify-self: center;
 }
 
+.text {
+  padding-right: 20px;
+}
+
 .homeContent {
   grid-row: stuff;
   display: inline-grid;
@@ -112,5 +164,7 @@ p.lastName{
   padding-bottom: 50px;
   background-color: #fff;
   margin-top: -6px;
+  position: relative;
+  z-index: 99;
 }
 </style>

@@ -1,6 +1,6 @@
 <template>
   <div id="music">
-    <parallax :speedFactor="0.2" direction="down">
+      <parallax :speedFactor="0.2" direction="down" breakpoint="(min-width: 10px)">
     <!-- <div class="imgContainer1"> -->
         <img src="@/assets/img/Oliver+Kiersten-169.jpg" alt="noImg">
     <!-- </div> -->
