@@ -152,7 +152,7 @@
         let whichDuration = (this.indexes.playing > -1) ? 'playing' : 'pdf';
         let progressMul = this.playbackPercent / 100;
         let duration = this.$store.getters.getRequestedDuration(this.indexes[whichDuration]);
-        console.log(this.$store.state.durations);
+        // console.log(this.$store.state.durations);
         return {
           progressMul: progressMul,
           duration: duration
@@ -221,7 +221,7 @@
     computed: {
       playbackCountdown() {
         let elapsedTime = this.getElapsedTime();
-        console.log(elapsedTime);
+        // console.log(elapsedTime);
         let newDurationSec = elapsedTime.duration - (elapsedTime.duration * elapsedTime.progressMul);
         return convertTimeToString(newDurationSec);
       },

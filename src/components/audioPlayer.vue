@@ -37,10 +37,10 @@ export default {
     return {
       playbackPercent: 0,
       publicPath: process.env.BASE_URL,
-      playerIsPlaying: false
+      playerIsPlaying: false,
     }
   },
-  props: ['index', 'title', 'details', 'waveform', 'audio', 'mvmts'],
+  props: ['index', 'title', 'details', 'waveform', 'audio', 'mvmts', 'length'],
 
   methods: {
     //this updates the bar as it progresses
@@ -55,6 +55,7 @@ export default {
     playerStatusChange: function() {
       this.playerIsPlaying = !this.playerIsPlaying;
       this.updateWhatIsPlaying();
+      console.log(this.$store.getters.howManyDurations.length);
     },
     updateWhatIsPlaying() {
       //remember what we are playing for the remote-player. If nothing then -1
@@ -119,7 +120,7 @@ export default {
     player () { return this.$refs.plyr.player },
 
     //returns the duration of the track
-    duration () { return this.$refs.plyr.player.duration }
+    duration () { return this.$refs.plyr.player.duration },
   },
 }
 </script>

@@ -72,6 +72,17 @@ export default {
     EventBus.$on('CLOSE_PDF_MODAL', () => {
       this.togglePdfModal();
     });
+
+    //Watch for all the durations to come in.
+    this.$store.subscribe((mutation, state) => {
+      switch(mutation.type) {
+        case 'addDuration':
+          if(state.durations.length == musicData.length) {
+            EventBus.$emit('DURATIONS_REGISTERED')
+          }
+          break;
+      }
+    });
   },
 
   beforeMount() {

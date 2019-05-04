@@ -19,6 +19,9 @@ export default new Vuex.Store({
     },
     getAllTitles(state) {
       return state.titles;
+    },
+    howManyDurations(state) {
+      return state.durations;
     }
   },
 

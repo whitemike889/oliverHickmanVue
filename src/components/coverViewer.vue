@@ -1,16 +1,11 @@
 <template>
   <div class="coverImage"
-    v-on:mouseover="coverHover=true"
-    v-on:mouseleave="coverHover=false"
     v-on:click="openPdfModal"
     >
     <img v-bind:src="`${publicPath}CO3_cover.jpg`"/>
     <font-awesome
       icon="eye"
       class="fa-eye"
-      v-bind:class="{faEyeHover: coverHover}"
-      v-on:mouseover="coverHover=true"
-      v-on:mouseleave="coverHover=false"
     />
     </div>
 </template>
@@ -72,9 +67,13 @@ export default {
   padding: 2px;
   border-radius: 2px;
 }
-.faEyeHover {
+.coverImage:hover .fa-eye {
   background-color: #02552b;
   color: #fff;
+  cursor: pointer;
+}
+.coverImage fa-eye:hover {
+  -webkit-filter: brightness(85%);
   cursor: pointer;
 }
 </style>

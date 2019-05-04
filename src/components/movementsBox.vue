@@ -5,9 +5,12 @@
       <div class="moreMvmts popper"v-bind:style="columnsCalc">
         <div v-for="(mvmt, mvmtIndex) in mvmts"
           class="mvmt"
-          v-text="mvmt.title"
           v-on:click="selectMvmt(mvmtIndex)"
-        ></div>
+        >
+          {{ mvmt.title }}
+          <font-awesome icon="play-circle" class="fa" v-bind:class="{ isPlaying: movementPlaying[mvmtIndex] }"/>
+          <!-- <font-awesome icon="play-circle" class="fa" v-show="movementPlaying[mvmtIndex]"/> -->
+        </div>
       </div>
 
       <div slot="reference" class="movementButtonWrapper">
@@ -22,7 +25,7 @@
 <script>
 
 import { library } from '@fortawesome/fontawesome-svg-core'
-import { faBars } from '@fortawesome/free-solid-svg-icons';
+import { faBars, faPlayCircle } from '@fortawesome/free-solid-svg-icons';
 // import { faAngleUp } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
 
@@ -32,7 +35,7 @@ import 'vue-popperjs/dist/vue-popper.css';
 import 'animate.css/animate.min.css';
 import EventBus from '../eventBus.js';
 
-library.add(faBars)
+library.add(faBars, faPlayCircle)
 // library.add(faAngleUp);
 
 export default {
@@ -42,6 +45,8 @@ export default {
   },
   data: function() {
     return {
+      durationPercent: [],
+      movementPlaying: {},
       popperOpts: {
         hover: false,
         placement: 'bottom',
@@ -63,18 +68,65 @@ export default {
       let newTimecodeString = this.mvmts[mvmtIndex].timecode;
       let newTimecode = newTimecodeString.toSeconds();
       EventBus.$emit(newTimecodeEmit, newTimecode);
-    }
+    },
+
+    calculateDurationPercent() {
+      let duration = this.$store.getters.getRequestedDuration(this.index);
+      this.mvmts.forEach((mvmt, index) => {
+        let percent = mvmt.timecode.toSeconds() / duration;
+        this.durationPercent[index] = percent;
+      });
+    },
+
+    determineWhatMvmtIsPlaying(percent) {
+      let realPercent = percent / 100;
+      let durationPercentLength = this.durationPercent.length;
+      let lastMvmtPlaying = realPercent.between(this.durationPercent[durationPercentLength - 1], 1)
+      //if we're playing this piece
+      if (this.$store.state.whatIsPlaying == this.index) {
+        //loop through the movements to find what's playing
+        this.durationPercent.forEach((mvmtPercent, index) => {
+          //compare the percent with two movements to see if it's inbetween
+          let isMvmtPlaying = realPercent.between(mvmtPercent, this.durationPercent[index+1]);
+
+          if(isMvmtPlaying) {
+            this.movementPlaying[index] = true;
+          //if the last movement is playing
+          } else if (lastMvmtPlaying) {
+            this.movementPlaying[durationPercentLength - 1] = true;
+          } else {
+            this.movementPlaying[index] = false;
+          }
+        });
+      }
+    },
+
+    instantiateMovementPlaying() {
+      this.mvmts.forEach( (mvmt, index) => {
+        this.$set(this.movementPlaying, index, false)
+      });
+    },
   },
+
   props: ['index', 'mvmts'],
-  watch: {
-    isShowing() {
-      //determine if it needs to fade in or out
-      let direction = this.animation.includes('fadeInDown') ? 'fadeOutUp' : 'fadeInDown';
-      this.animation = `animated faster ${direction}`;
-    }
-  },
+
   computed: {
     columnsCalc () { return `gridTemplateColumns: repeat(${this.mvmts.length}, auto)` }
+  },
+
+  created() {
+    this.instantiateMovementPlaying();
+  },
+
+  mounted() {
+    EventBus.$on('DURATIONS_REGISTERED', () => {
+      this.calculateDurationPercent();
+    });
+
+    EventBus.$on('NEW_PROGRESS_PERCENT', (percent) => {
+      this.determineWhatMvmtIsPlaying(percent);
+      // console.log(this.movementPlaying);
+    });
   }
 }
 
@@ -84,6 +136,12 @@ String.prototype.toSeconds = function() {
   let ms = this.split(':');
   return (+ms[0]) * 60 + (+ms[1] || 0);
 }
+//check between number. ripped from https://stackoverflow.com/questions/14718561/how-to-check-if-a-number-is-between-two-values
+Number.prototype.between = function(a, b) {
+  var min = Math.min.apply(Math, [a, b]),
+    max = Math.max.apply(Math, [a, b]);
+  return this > min && this < max;
+};
 </script>
 
 <style>
@@ -130,7 +188,7 @@ String.prototype.toSeconds = function() {
 .moreMvmts {
   display: inline-grid;
   grid-template-rows: auto;
-  column-gap: 30px;
+  column-gap: 6px;
   position: relative;
 }
 
@@ -149,12 +207,20 @@ String.prototype.toSeconds = function() {
   color: #fff;
 }
 
-/* Shift things around when you animate */
-.upShiftMargin {
-  margin-top: -19px;
+.mvmt .fa {
+  margin-top: -10;
+  color: #000;
+  top: 0;
+  padding-left: 3px;
+  cursor: pointer;
+  visibility: hidden;
 }
-.upShiftTop {
-  top: -32px;
+.mvmt:hover .fa {
+  color: #fff;
+  visibility: visible;
 }
 
+.isPlaying {
+  visibility: visible !important;
+}
 </style>
