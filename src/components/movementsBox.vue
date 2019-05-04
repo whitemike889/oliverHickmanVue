@@ -47,6 +47,7 @@ export default {
     return {
       durationPercent: [],
       movementPlaying: {},
+      progressPercent: 0,
       popperOpts: {
         hover: false,
         placement: 'bottom',
@@ -81,26 +82,23 @@ export default {
     determineWhatMvmtIsPlaying(percent) {
       let realPercent = percent / 100;
       let durationPercentLength = this.durationPercent.length;
-      let lastMvmtPlaying = realPercent.between(this.durationPercent[durationPercentLength - 1], 1)
+      let lastMvmtPlaying = realPercent.between(this.durationPercent[durationPercentLength - 1], 1);
       //if we're playing this piece
       if (this.$store.state.whatIsPlaying == this.index) {
-        //loop through the movements to find what's playing
-        this.durationPercent.forEach((mvmtPercent, index) => {
-          //compare the percent with two movements to see if it's inbetween
-          let isMvmtPlaying = realPercent.between(mvmtPercent, this.durationPercent[index+1]);
-
-          if(isMvmtPlaying) {
-            this.movementPlaying[index] = true;
-          //if the last movement is playing
-          } else if (lastMvmtPlaying) {
-            this.movementPlaying[durationPercentLength - 1] = true;
-          } else {
-            this.movementPlaying[index] = false;
-          }
-        });
+        //if the last movement is playing set it to true, otherwise loop through and set what is playing
+        if (lastMvmtPlaying) {
+          this.movementPlaying[durationPercentLength - 1] = true;
+        } else {
+          this.durationPercent.forEach((mvmtPercent, index) => {
+            //compare the percent with two movements to see if it's inbetween
+            let isMvmtPlaying = realPercent.between(mvmtPercent, this.durationPercent[index+1]);
+            this.movementPlaying[index] = isMvmtPlaying;
+          });
+        }
       }
     },
 
+    //set up and reactive object with all the movements. 
     instantiateMovementPlaying() {
       this.mvmts.forEach( (mvmt, index) => {
         this.$set(this.movementPlaying, index, false)
@@ -124,8 +122,10 @@ export default {
     });
 
     EventBus.$on('NEW_PROGRESS_PERCENT', (percent) => {
+      this.progressPercent = percent;
       this.determineWhatMvmtIsPlaying(percent);
-      // console.log(this.movementPlaying);
+      // console.log("playing", this.movementPlaying);
+      // console.log("percent", percent);
     });
   }
 }

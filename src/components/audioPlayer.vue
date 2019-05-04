@@ -49,13 +49,13 @@ export default {
       this.playbackPercent = percent;
       //send progress to modal
       EventBus.$emit('NEW_PROGRESS_PERCENT', percent);
+      this.$store.commit('updateWhatIsPlaying', this.index);
     },
 
     //when the player stops, send it to the store
     playerStatusChange: function() {
       this.playerIsPlaying = !this.playerIsPlaying;
       this.updateWhatIsPlaying();
-      console.log(this.$store.getters.howManyDurations.length);
     },
     updateWhatIsPlaying() {
       //remember what we are playing for the remote-player. If nothing then -1
