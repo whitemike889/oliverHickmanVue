@@ -64,6 +64,7 @@ export default {
       } else {
         this.$store.commit('updateWhatIsPlaying', -1);
       }
+      // console.log(this.$store.state.whatIsPlaying);
     },
 
     //store the duration

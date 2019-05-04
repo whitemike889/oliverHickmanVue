@@ -192,16 +192,16 @@
           }
         }
       }
-  },
+    },
 
     mounted() {
       EventBus.$on('OPEN_PDF_MODAL', (index) => {
+        //get some data for what is playing and the pdf
+        this.registerIndexes(index);
         //if something is playing set the playStatus to true
         this.playStatus = (this.indexes.playing == -1 ) ? false : true;
         //get the title--either what is playing or pdf title
         this.whatTitleIsPlaying = this.getAppropriateTitle(index);
-        //get some data for what is playing and the pdf
-        this.registerIndexes(index);
         //update the play status bar if something is playing, else set it to 0
         this.playbackPercent = (this.playStatus) ? this.playbackPercent : 0;
 
