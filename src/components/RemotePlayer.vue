@@ -9,7 +9,7 @@
       </div>
     </div> <!-- end controlWrapper -->
     <div class="playbackTitle">
-      <popper trigger="click" :options="popperOpts" :visible-arrow="false" :forceShow="popperOpen">
+      <popper trigger="click" :options="popperOpts" :visible-arrow="false">
         <font-awesome icon="bars" class="fa titleOptions" slot="reference"/>
         <div class="popper">
           <table class="popper-table">
@@ -18,7 +18,7 @@
               v-show="shouldShowPopperRow(index)"
               @mouseover="popperOpts.hover=index"
               @mouseout="popperOpts.hover=-1"
-              @click="playInstead(index); togglePopper()"
+              @click="playInstead(index)"
             >
               <td class="popper-title" v-html="title"></td>
               <td class="popper-fa">
@@ -77,7 +77,6 @@
         playStatus: false,
         wasPlayingBeforeScrub: false,
         whatTitleIsPlaying: '',
-        popperOpen: false,
         popperOpts: {
           hover: false,
           placement: 'top-start',
@@ -94,10 +93,6 @@
     },
 
     methods: {
-      togglePopper() {
-        this.popperOpen = !this.popperOpen
-      },
-
       togglePlayStatus() {
         if (this.playStatus) { //if the player is playing pause it, and don't worry about scrubbing.
           EventBus.$emit(`PAUSE_PLAYER_${this.indexes.playing}`);
@@ -220,6 +215,10 @@
 
       EventBus.$on("NEW_PROGRESS_PERCENT", (newPercent) => {
         this.playbackPercent = newPercent;
+      });
+
+      EventBus.$on("DURATIONS_REGISTERED", () => {
+        this.getElapsedTime();
       });
     },
 

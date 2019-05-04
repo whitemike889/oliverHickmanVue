@@ -68,12 +68,14 @@ export default {
 
     //store the duration
     registerDurations: function() {
-      console.log(this.player.duration);
-      this.$store.commit({
-        type: 'addDuration',
-        index: this.index,
-        duration: this.player.duration
-      });
+      //Have to use a time out because aparently durations are not ready when the player is?
+      setTimeout(() => {
+        this.$store.commit({
+          type: 'addDuration',
+          index: this.index,
+          duration: this.player.duration
+        });
+      }, 250);
     },
 
     //store the title

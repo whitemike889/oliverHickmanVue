@@ -1,11 +1,11 @@
 <template>
 <div class="playerMovementBoxWrapper">
   <div class="showMoreMvmts">
-    <popper trigger="click" :options="popperOpts" :visible-arrow="true" :forceShow="popperOpen">
+    <popper trigger="click" :options="popperOpts" :visible-arrow="true">
       <div class="moreMvmts popper"v-bind:style="columnsCalc">
         <div v-for="(mvmt, mvmtIndex) in mvmts"
           class="mvmt"
-          v-on:click="selectMvmt(mvmtIndex); togglePopper()"
+          v-on:click="selectMvmt(mvmtIndex)"
 
         >
           {{ mvmt.title }}
@@ -49,7 +49,6 @@ export default {
       durationPercent: [],
       movementPlaying: {},
       progressPercent: 0,
-      popperOpen: false,
       popperOpts: {
         hover: false,
         placement: 'bottom',
@@ -65,9 +64,6 @@ export default {
     }
   },
   methods: {
-    togglePopper() {
-      this.popperOpen = !this.popperOpen
-    },
     //take the clicked element, find the time code, and emit the event to the EventBus
     selectMvmt: function(mvmtIndex) {
       let newTimecodeEmit = `NEW_TIMECODE_${this.index}`;
