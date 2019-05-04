@@ -68,12 +68,14 @@ export default {
 
     //store the duration
     registerDurations: function() {
-      console.log(this.player.duration);
-      this.$store.commit({
-        type: 'addDuration',
-        index: this.index,
-        duration: this.player.duration
-      });
+      setTimeout(() => {
+        this.$store.commit({
+          type: 'addDuration',
+          index: this.index,
+          duration: this.player.duration
+        });
+        // console.log();
+      }, 250);
     },
 
     //store the title
