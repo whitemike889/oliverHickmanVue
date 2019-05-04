@@ -1,11 +1,12 @@
 <template>
 <div class="playerMovementBoxWrapper">
   <div class="showMoreMvmts">
-    <popper trigger="click" :options="popperOpts" :visible-arrow="true">
+    <popper trigger="click" :options="popperOpts" :visible-arrow="true" :forceShow="popperOpen">
       <div class="moreMvmts popper"v-bind:style="columnsCalc">
         <div v-for="(mvmt, mvmtIndex) in mvmts"
           class="mvmt"
-          v-on:click="selectMvmt(mvmtIndex)"
+          v-on:click="selectMvmt(mvmtIndex); togglePopper()"
+
         >
           {{ mvmt.title }}
           <font-awesome icon="play-circle" class="fa" v-bind:class="{ isPlaying: movementPlaying[mvmtIndex] }"/>
@@ -48,6 +49,7 @@ export default {
       durationPercent: [],
       movementPlaying: {},
       progressPercent: 0,
+      popperOpen: false,
       popperOpts: {
         hover: false,
         placement: 'bottom',
@@ -63,6 +65,9 @@ export default {
     }
   },
   methods: {
+    togglePopper() {
+      this.popperOpen = !this.popperOpen
+    },
     //take the clicked element, find the time code, and emit the event to the EventBus
     selectMvmt: function(mvmtIndex) {
       let newTimecodeEmit = `NEW_TIMECODE_${this.index}`;
@@ -98,7 +103,7 @@ export default {
       }
     },
 
-    //set up and reactive object with all the movements. 
+    //set up and reactive object with all the movements.
     instantiateMovementPlaying() {
       this.mvmts.forEach( (mvmt, index) => {
         this.$set(this.movementPlaying, index, false)
