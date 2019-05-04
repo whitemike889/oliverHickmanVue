@@ -202,6 +202,10 @@ h2.musicTitle {
   top: 74px;
   z-index: 4;
 }
+/* Moves the tooltip in front the Movements box since they overlap a bit */
+.plyr:hover {
+  z-index: 6;
+}
 /* Hide the speed settings. Ain't nobody got time for that */
 .plyr__menu {
   display: none;
@@ -228,5 +232,8 @@ h2.musicTitle {
 }
 .plyr--audio .plyr__controls{
   background-color: transparent;
+}
+.plyr__tooltip {
+  z-index: 100;
 }
 </style>

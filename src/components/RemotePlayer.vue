@@ -10,7 +10,7 @@
     </div> <!-- end controlWrapper -->
     <div class="playbackTitle">
       <popper trigger="click" :options="popperOpts" :visible-arrow="false">
-        <font-awesome icon="ellipsis-v" class="fa titleOptions" slot="reference"/>
+        <font-awesome icon="bars" class="fa titleOptions" slot="reference"/>
         <div class="popper">
           <table class="popper-table">
             <tr class="popper-title-row"
@@ -54,9 +54,9 @@
   import EventBus from '../eventBus.js';
 
   import { library } from '@fortawesome/fontawesome-svg-core'
-  import { faPlay, faPause, faEllipsisV, faPlayCircle, faEye } from '@fortawesome/free-solid-svg-icons';
+  import { faPlay, faPause, faPlayCircle, faEye, faBars } from '@fortawesome/free-solid-svg-icons';
   import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
-  library.add(faPlay, faPause, faEllipsisV, faPlayCircle, faEye);
+  library.add(faPlay, faPause, faPlayCircle, faEye, faBars);
 
   export default {
     name: 'remote-player',

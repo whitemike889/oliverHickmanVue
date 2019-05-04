@@ -10,9 +10,9 @@
         ></div>
       </div>
 
-      <div slot="reference">
-        <font-awesome icon="ellipsis-v" class="movementButton"/>
-        <p class="movementButton">MOVEMENTS</p>
+      <div slot="reference" class="movementButtonWrapper">
+        <font-awesome icon="bars" class="movementButtonFa"/>
+        <p>MOVEMENTS</p>
       </div>
     </popper>
   </div>
@@ -22,7 +22,7 @@
 <script>
 
 import { library } from '@fortawesome/fontawesome-svg-core'
-import { faEllipsisV } from '@fortawesome/free-solid-svg-icons';
+import { faBars } from '@fortawesome/free-solid-svg-icons';
 // import { faAngleUp } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
 
@@ -32,7 +32,7 @@ import 'vue-popperjs/dist/vue-popper.css';
 import 'animate.css/animate.min.css';
 import EventBus from '../eventBus.js';
 
-library.add(faEllipsisV);
+library.add(faBars)
 // library.add(faAngleUp);
 
 export default {
@@ -42,10 +42,6 @@ export default {
   },
   data: function() {
     return {
-      // isShowing: false,
-      // firstShow: false,
-      // animation: '',
-      // moreGrow: false,
       popperOpts: {
         hover: false,
         placement: 'bottom',
@@ -61,12 +57,6 @@ export default {
     }
   },
   methods: {
-    toggleMvnts: function() {
-      //hide the movements until first click
-      this.firstShow = true;
-      //control the animation
-      this.isShowing = !this.isShowing;
-    },
     //take the clicked element, find the time code, and emit the event to the EventBus
     selectMvmt: function(mvmtIndex) {
       let newTimecodeEmit = `NEW_TIMECODE_${this.index}`;
@@ -101,8 +91,9 @@ String.prototype.toSeconds = function() {
 /* wraps the button and the grid */
 .playerMovementBoxWrapper {
   position: relative;
-  z-index: 10;
+  z-index: 5;
 }
+
 .movementBoxWrapper p {
   margin-top: 0px;
   line-height: 20px;
@@ -113,11 +104,17 @@ String.prototype.toSeconds = function() {
 }
 
 /* The MOVEMENTS button */
+.movementButtonWrapper {
+  /* Centers the text with fa next to it */
+  margin-left: -14px;
+  /* Shift it up just a little bit */
+  margin-top: -7px;
+  position: relative;
+}
 
 .showMoreMvmts {
   height: auto;
   position: relative;
-  z-index: 2;
 }
 
 .showMoreMvmts p {
