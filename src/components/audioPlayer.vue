@@ -76,7 +76,7 @@ export default {
           index: this.index,
           duration: this.player.duration
         });
-      }, 250);
+      }, 1000);
     },
 
     //store the title
