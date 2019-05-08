@@ -41,13 +41,13 @@ export default {
 <style>
 .navBar {
   padding: 10px 8px 8px 8px;
-  border-bottom: 2px solid #02552b;
+  border-bottom: 3px solid #02552b;
 }
 .navBar:hover {
-  border-bottom: 2px solid #fff;
+  border-bottom: 3px solid #fff;
 }
 .navBarCurrent {
-  border-bottom: 2px solid #fff;
+  border-bottom: 3px solid #fff;
 }
 .navBar.menuText {
   padding-top: 2px;
