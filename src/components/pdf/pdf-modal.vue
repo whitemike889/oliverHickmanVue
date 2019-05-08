@@ -136,7 +136,7 @@ export default {
 <style>
   .pdf-wrapper{
     position: absolute;
-    top: 42px;
+    top: 47px;
   }
   .pdf-document {
     position: fixed;
@@ -149,14 +149,15 @@ export default {
     background-color: #012a15;
     top: 0;
     width: 100vw;
-    height: 42px;
+    height: 47px;
     z-index: 8999;
   }
 
   .left-controls{
     position: absolute;
     top: 0;
-    height: 42px;
+    padding-top: 3px;
+    height: 47px;
     width : 100px;
     padding-left: 5px;
     /* Set up the grid within */
@@ -192,7 +193,7 @@ export default {
   .loadingBar {
     position: relative;
     z-index: 8999;
-    padding-top: 39px;
+    padding-top: 44px;
   }
 
   .modal-backdrop {

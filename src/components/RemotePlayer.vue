@@ -260,12 +260,13 @@
 <style>
 
 .playbackWrapper {
-  height: 42px;
+  height: 47px;
   width: 50%;
   display: grid;
   grid-template-columns: [play] 1fr [progressBar] 75% [progressText] 1fr;
   grid-template-rows: [top] 21px [bottom] 21px;
   align-items: center;
+  padding-top: 3px;
   position: absolute;
   z-index: 9002;
   margin-left: auto;
