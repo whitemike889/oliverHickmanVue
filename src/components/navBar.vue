@@ -1,18 +1,59 @@
 <template>
   <div class = "bar menuText">
-    <div class='navBar home-nav'><router-link class='menuText' to="/">HOME</router-link></div>
-    <div class='navBar about'><router-link class='menuText' to="/about">ABOUT</router-link></div>
-    <div class='navBar music'><router-link class='menuText' to="/music">MUSIC</router-link></div>
-    <div class='navBar downloads'><router-link class='menuText' to="/downloads">DOWNLOADS</router-link></div>
-    <div class='navBar contact'><router-link class='menuText' to="/contact">CONTACT</router-link></div>
+
+    <div v-for="page in pages" class="navBar"
+      v-bind:class="[page.classStyle, { navBarCurrent: page.classStyle == currentPage }]">
+      <router-link class='menuText' v-bind:to="page.to">{{ page.label }}</router-link>
+    </div>
+
   </div>
 </template>
 
+<script>
+
+export default {
+  data() {
+    return {
+      pages: [
+        {'classStyle': 'home-nav', 'to': '/', 'label': 'HOME'},
+        {'classStyle': 'about', 'to': '/about', 'label': 'ABOUT'},
+        {'classStyle': 'music', 'to': '/music', 'label': 'MUSIC'},
+        {'classStyle': 'downloads', 'to': '/downloads', 'label': 'DOWNLOADS'},
+        {'classStyle': 'contact', 'to': '/contact', 'label': 'CONTACT'},
+      ],
+      currentPage: '',
+    }
+  },
+
+  mounted() {
+    this.currentPage = this.$route.name;
+  },
+
+  watch: {
+    '$route' (newRoute) {
+      this.currentPage = (newRoute.name == 'home') ? 'home-nav' : newRoute.name;
+    }
+  }
+}
+
+</script>
+
 <style>
 .navBar {
-  padding: 8px;
-  padding-left: 2.25vw;
-  padding-right: 2.25vw;
+  padding: 10px 8px 8px 8px;
+  border-bottom: 2px solid #02552b;
+}
+.navBar:hover {
+  border-bottom: 2px solid #fff;
+}
+.navBarCurrent {
+  border-bottom: 2px solid #fff;
+}
+.navBar.menuText {
+  padding-top: 2px;
+}
+a.menuText {
+  padding-left: 4px;
 }
 .bar {
   background-color: #02552b;
@@ -20,6 +61,7 @@
   display: inline-grid;
   grid-template-columns: 0.5fr auto auto auto auto auto 0.5fr;
   grid-template-rows: auto;
+  grid-column-gap: 2.25vw;
   justify-content: center;
   position: fixed;
   top: 0;
