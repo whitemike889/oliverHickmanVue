@@ -17,7 +17,7 @@
     "npm": "^6.9.0",
     "rangetouch": "^1.0.6",
     "v-tooltip": "^2.0.1",
-    "vue": "^2.6.10",
+    "vue": "^3.0.0",
     "vue-parallaxy": "^1.1.1",
     "vue-pdf": "^4.0.6",
     "vue-plyr": "^5.1.3",
